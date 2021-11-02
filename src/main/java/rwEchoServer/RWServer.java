@@ -19,5 +19,9 @@ public class RWServer {
             bufferedWriter.write("Echo: " + stringByClient);
             bufferedWriter.flush();
         }
+        bufferedReader.close();
+        bufferedWriter.close();
+        socket.close();
+        serverSocket.close();
     }
 }

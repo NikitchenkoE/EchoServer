@@ -27,5 +27,9 @@ public class RWClient {
             String stringByServer = new String(buffer, 0, count);
             System.out.println(stringByServer);
         }
+
+        bufferedReader.close();
+        bufferedWriter.close();
+        socket.close();
     }
 }
