@@ -15,18 +15,22 @@ public class IOClient {
 
     public static void main(String[] args) throws IOException {
         Socket socket = new Socket("localhost", 3000);
+        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(socket.getOutputStream());
+        BufferedInputStream bufferedInputStream = new BufferedInputStream(socket.getInputStream());
+
+
         String receivedMessage = "";
         while (!receivedMessage.equals("Echo: \n")) {
-            OutputStream outputStream = socket.getOutputStream();
             String message = getMessageFromConsole();
-            outputStream.write(message.getBytes(StandardCharsets.UTF_8));
+            bufferedOutputStream.write(message.getBytes(StandardCharsets.UTF_8));
+            bufferedOutputStream.flush();
 
-            InputStream inputStream = socket.getInputStream();
             byte[] buffer = new byte[8192];
-            int count = inputStream.read(buffer);
+            int count = bufferedInputStream.read(buffer);
             receivedMessage = new String(buffer, 0, count);
-
             System.out.println(receivedMessage);
         }
+        bufferedOutputStream.close();
+        bufferedInputStream.close();
     }
 }
