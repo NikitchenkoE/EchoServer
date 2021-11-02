@@ -1,4 +1,4 @@
-package IOEchoServer;
+package ioEchoServer;
 
 import java.io.*;
 import java.net.Socket;
@@ -18,16 +18,15 @@ public class IOClient {
         BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(socket.getOutputStream());
         BufferedInputStream bufferedInputStream = new BufferedInputStream(socket.getInputStream());
 
-
-        String receivedMessage = "";
-        while (!receivedMessage.equals("Echo: \n")) {
-            String message = getMessageFromConsole();
-            bufferedOutputStream.write(message.getBytes(StandardCharsets.UTF_8));
+        String stringByConsole = "";
+        while (!stringByConsole.equals("\n")) {
+            stringByConsole = getMessageFromConsole();
+            bufferedOutputStream.write(stringByConsole.getBytes(StandardCharsets.UTF_8));
             bufferedOutputStream.flush();
 
             byte[] buffer = new byte[8192];
             int count = bufferedInputStream.read(buffer);
-            receivedMessage = new String(buffer, 0, count);
+            String receivedMessage = new String(buffer, 0, count);
             System.out.println(receivedMessage);
         }
         bufferedOutputStream.close();

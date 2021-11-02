@@ -1,4 +1,4 @@
-package IOEchoServer;
+package ioEchoServer;
 
 import java.io.*;
 import java.net.ServerSocket;
