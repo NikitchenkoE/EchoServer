@@ -10,31 +10,36 @@ public class Server {
     private String webAppPath;
     private String fileName;
 
-    public Server()  {
+    public Server() {
     }
 
     public void start() {
-        try (ServerSocket serverSocket = new ServerSocket(port);
-             Socket clientSocket = serverSocket.accept();
-             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))) {
-
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
             while (true) {
-                RequestAnalyzer requestAnalyzer = new RequestAnalyzer(webAppPath, fileName, bufferedReader);
-                response(bufferedWriter, requestAnalyzer.readFile());
+                Socket clientSocket = serverSocket.accept();
+                new Thread(() -> {
+                    try {
+                        addHandler(clientSocket,webAppPath,fileName);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }).start();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void response(BufferedWriter bufferedWriter, String response) throws IOException {
+
+    private static void response(BufferedWriter bufferedWriter, String response) throws IOException {
         try {
-            bufferedWriter.write("HTTP/1.1 200 OK");
-            bufferedWriter.newLine();
-            bufferedWriter.newLine();
-            bufferedWriter.write(response);
-            bufferedWriter.flush();
+            if (response!=null) {
+                bufferedWriter.write("HTTP/1.1 200 OK");
+                bufferedWriter.newLine();
+                bufferedWriter.newLine();
+                bufferedWriter.write(response);
+                bufferedWriter.flush();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -62,6 +67,15 @@ public class Server {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public static void addHandler(Socket socket,String webAppPath, String fileName) throws IOException {
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))) {
+
+            RequestAnalyzer requestAnalyzer = new RequestAnalyzer(webAppPath, fileName, bufferedReader);
+            response(bufferedWriter, requestAnalyzer.readFile());
+        }
     }
 
 }
