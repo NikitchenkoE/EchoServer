@@ -30,7 +30,6 @@ public class Server {
         }
     }
 
-
     private static void response(BufferedWriter bufferedWriter, String response) throws IOException {
         try {
             if (response!=null) {
@@ -39,9 +38,19 @@ public class Server {
                 bufferedWriter.newLine();
                 bufferedWriter.write(response);
                 bufferedWriter.flush();
+            }else {
+                bufferedWriter.write("HTTP/1.1 404 Not Found");
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+    public static void addHandler(Socket socket,String webAppPath, String fileName) throws IOException {
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))) {
+
+            RequestAnalyzer requestAnalyzer = new RequestAnalyzer(webAppPath, fileName, bufferedReader);
+            response(bufferedWriter, requestAnalyzer.readFile());
         }
     }
 
@@ -69,14 +78,7 @@ public class Server {
         this.fileName = fileName;
     }
 
-    public static void addHandler(Socket socket,String webAppPath, String fileName) throws IOException {
-        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))) {
 
-            RequestAnalyzer requestAnalyzer = new RequestAnalyzer(webAppPath, fileName, bufferedReader);
-            response(bufferedWriter, requestAnalyzer.readFile());
-        }
-    }
 
 }
 
