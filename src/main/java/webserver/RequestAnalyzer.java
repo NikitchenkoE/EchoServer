@@ -43,7 +43,7 @@ public class RequestAnalyzer {
         StringBuilder stringBuilder = new StringBuilder();
         String receivedRequest;
         try {
-            while (!(receivedRequest = bufferedReader.readLine()).equals("")) {
+            while (!(receivedRequest = bufferedReader.readLine()).isEmpty()) {
                 stringBuilder.append(receivedRequest);
             }
         } catch (IOException e) {
