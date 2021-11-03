@@ -27,8 +27,8 @@ public class RequestAnalyzer {
         String[] stringsByRequest = Pattern.compile(" ").split(receivedRequestByClient);
 
         List<String> stringsWithWebPath = Arrays.stream(stringsByRequest)
-                                                .filter(s -> s.contains(webPath))
-                                                .collect(Collectors.toList());
+                .filter(s -> s.contains(webPath))
+                .collect(Collectors.toList());
         String pathPart = getPathPart(stringsWithWebPath);
 
         if (new File(pathPart + fileName).exists()) {
@@ -68,15 +68,12 @@ public class RequestAnalyzer {
 
     private String getPathPart(List<String> path) {
         StringBuilder stringBuilder = new StringBuilder();
-            path.stream()
-                .filter(s -> s.contains(webPath))
-                .findFirst()
-                .stream()
-                .map(string -> Pattern.compile("/").split(string))
-                .flatMap(Arrays::stream)
-                .collect(Collectors.toList())
-                .forEach(s -> stringBuilder.append(s).append("\\"));
+        String firstPartOfPath = path.stream()
+                                    .filter(s -> s.contains(webPath))
+                                    .findFirst()
+                                    .orElse(null);
 
+        stringBuilder.append(firstPartOfPath);
         //Delete first element "/", because path to file start from letters
         stringBuilder.delete(0, 1);
         return stringBuilder.toString();
