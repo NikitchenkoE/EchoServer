@@ -15,43 +15,28 @@ public class RequestAnalyzer {
     private final BufferedReader bufferedReader;
 
 
-    public RequestAnalyzer(String webPath, String fileName, BufferedReader bufferedReader)  {
+    public RequestAnalyzer(String webPath, String fileName, BufferedReader bufferedReader) {
         this.webPath = webPath;
         this.fileName = fileName;
         this.bufferedReader = bufferedReader;
     }
 
-    private String analyzePath()  {
+    private String getPath() {
         String pathToFile = null;
-        String receivedRequest;
-        receivedRequest = readRequest();
-        String[] stringsByRequest = Pattern.compile(" ").split(receivedRequest);
+        String receivedRequestByClient = readRequest();
+        String[] stringsByRequest = Pattern.compile(" ").split(receivedRequestByClient);
 
         List<String> stringsWithWebPath = Arrays.stream(stringsByRequest)
                 .filter(s -> s.contains(webPath))
                 .collect(Collectors.toList());
-        String path = webPathToNormalForm(stringsWithWebPath);
+        String pathPart = getPathPart(stringsWithWebPath);
 
-        if (new File(path + fileName).exists()) {
-            pathToFile = path.concat(fileName);
-        } else if (new File(path).exists()) {
-            pathToFile = path;
+        if (new File(pathPart + fileName).exists()) {
+            pathToFile = pathPart.concat(fileName);
+        } else if (new File(pathPart).exists()) {
+            pathToFile = pathPart;
         }
         return pathToFile;
-    }
-
-    public String readFile() throws IOException {
-        String filePath = analyzePath();
-        if (filePath != null) {
-            try (BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath))) {
-                String s;
-                StringBuilder stringBuilder = new StringBuilder();
-                while ((s = bufferedReader.readLine()) != null) {
-                    stringBuilder.append(s);
-                }
-                return stringBuilder.toString();
-            }
-        } else return null;
     }
 
     public String readRequest() {
@@ -67,7 +52,21 @@ public class RequestAnalyzer {
         return stringBuilder.toString();
     }
 
-    private String webPathToNormalForm(List<String> path) {
+    public String readFile() throws IOException {
+        String filePath = getPath();
+        if (filePath != null) {
+            try (BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath))) {
+                String s;
+                StringBuilder stringBuilder = new StringBuilder();
+                while ((s = bufferedReader.readLine()) != null) {
+                    stringBuilder.append(s);
+                }
+                return stringBuilder.toString();
+            }
+        } else return null;
+    }
+
+    private String getPathPart(List<String> path) {
         StringBuilder stringBuilder = new StringBuilder();
         for (String string : path) {
             if (string.contains(webPath)) {
