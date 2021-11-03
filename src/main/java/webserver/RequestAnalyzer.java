@@ -27,10 +27,10 @@ public class RequestAnalyzer {
         String[] stringsByRequest = Pattern.compile(" ").split(receivedRequestByClient);
 
         List<String> stringsWithWebPath = Arrays.stream(stringsByRequest)
-                .filter(s -> s.contains(webPath))
-                .collect(Collectors.toList());
-        String pathPart = getPathPart(stringsWithWebPath);
+                                                .filter(s -> s.contains(webPath))
+                                                .collect(Collectors.toList());
 
+        String pathPart = getPathPart(stringsWithWebPath);
         if (new File(pathPart + fileName).exists()) {
             pathToFile = pathPart.concat(fileName);
         } else if (new File(pathPart).exists()) {
