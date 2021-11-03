@@ -76,6 +76,7 @@ public class RequestAnalyzer {
                 break;
             }
         }
+        //Delete first element "/", because path to file start from letters
         stringBuilder.delete(0, 1);
         return stringBuilder.toString();
     }
