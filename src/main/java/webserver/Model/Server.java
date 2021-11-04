@@ -7,10 +7,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
+    private static final String DEFAULT_ERROR_PAGE = "src/main/resources/webapp/bat_path.html";
     private static final int DEFAULT_PORT = 8080;
     private int port = DEFAULT_PORT;
     private String webAppPath;
     private String fileName;
+    private String errorPagePath = DEFAULT_ERROR_PAGE;
 
     public Server() {
     }
@@ -27,7 +29,7 @@ public class Server {
                 Socket clientSocket = serverSocket.accept();
                 new Thread(() -> {
                     try {
-                        RequestHandler requestHandler = new RequestHandler(fileName,webAppPath,clientSocket);
+                        RequestHandler requestHandler = new RequestHandler(fileName, webAppPath, clientSocket, errorPagePath);
                         requestHandler.handle();
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -63,6 +65,8 @@ public class Server {
         this.fileName = fileName;
     }
 
-
+    public void setErrorPagePath(String errorPagePath) {
+        this.errorPagePath = errorPagePath;
+    }
 }
 
