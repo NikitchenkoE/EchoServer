@@ -42,6 +42,7 @@ public class Server {
 
             RequestAnalyzer requestAnalyzer = new RequestAnalyzer(webAppPath, fileName, bufferedReader);
             response(bufferedWriter, requestAnalyzer.readFile());
+            clientSocket.close();
         }
     }
 
