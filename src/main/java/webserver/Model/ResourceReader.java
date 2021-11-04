@@ -12,16 +12,14 @@ public class ResourceReader {
     }
 
     public String getContent() throws IOException {
-        if (pathToFile != null) {
-            try (BufferedReader bufferedReader = new BufferedReader(new FileReader(pathToFile))) {
-                String s;
-                StringBuilder stringBuilder = new StringBuilder();
-                while ((s = bufferedReader.readLine()) != null) {
-                    stringBuilder.append(s);
-                }
-                return stringBuilder.toString();
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(pathToFile))) {
+            String s;
+            StringBuilder stringBuilder = new StringBuilder();
+            while ((s = bufferedReader.readLine()) != null) {
+                stringBuilder.append(s);
             }
-        } else return null;
+            return stringBuilder.toString();
+        }
     }
 
 }
