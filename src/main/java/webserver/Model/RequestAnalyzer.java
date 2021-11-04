@@ -30,9 +30,11 @@ public class RequestAnalyzer {
         Request request = getRequest();
         String pathPart = request.getUri();
         if (pathPart.contains(webPath)) {
+
             if (new File(pathPart + fileName).exists()) {
                 pathToFile = pathPart.concat(fileName);
                 status = true;
+
             } else if (new File(pathPart).exists()) {
                 pathToFile = pathPart;
                 status = true;
