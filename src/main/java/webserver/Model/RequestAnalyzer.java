@@ -21,7 +21,7 @@ public class RequestAnalyzer {
         this.bufferedReader = bufferedReader;
     }
 
-    private String getPath() {
+    public String getPath() {
         String pathToFile = null;
         String receivedRequestByClient = readRequest();
         String[] stringsByRequest = Pattern.compile(" ").split(receivedRequestByClient);
@@ -39,7 +39,7 @@ public class RequestAnalyzer {
         return pathToFile;
     }
 
-    public String readRequest() {
+    private String readRequest() {
         StringBuilder stringBuilder = new StringBuilder();
         String receivedRequest;
         try {
@@ -50,20 +50,6 @@ public class RequestAnalyzer {
             e.printStackTrace();
         }
         return stringBuilder.toString();
-    }
-
-    public String readFile() throws IOException {
-        String filePath = getPath();
-        if (filePath != null) {
-            try (BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath))) {
-                String s;
-                StringBuilder stringBuilder = new StringBuilder();
-                while ((s = bufferedReader.readLine()) != null) {
-                    stringBuilder.append(s);
-                }
-                return stringBuilder.toString();
-            }
-        } else return null;
     }
 
     private String getPathPart(List<String> path) {
