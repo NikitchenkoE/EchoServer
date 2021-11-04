@@ -22,40 +22,14 @@ public class Server {
     public void start() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             while (true) {
-                Socket clientSocket = serverSocket.accept();
+                RequestHandler requestHandler = new RequestHandler(fileName,webAppPath,serverSocket.accept());
                 new Thread(() -> {
                     try {
-                        addHandler(clientSocket, webAppPath, fileName);
+                        requestHandler.handle();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }).start();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void addHandler(Socket clientSocket, String webAppPath, String fileName) throws IOException {
-        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))) {
-
-            RequestAnalyzer requestAnalyzer = new RequestAnalyzer(webAppPath, fileName, bufferedReader);
-            response(bufferedWriter, requestAnalyzer.readFile());
-            clientSocket.close();
-        }
-    }
-
-    private void response(BufferedWriter bufferedWriter, String fileText) {
-        try {
-            if (fileText != null) {
-                bufferedWriter.write("HTTP/1.1 200 OK");
-                bufferedWriter.newLine();
-                bufferedWriter.newLine();
-                bufferedWriter.write(fileText);
-                bufferedWriter.flush();
-            } else {
-                bufferedWriter.write("HTTP/1.1 404 Not Found");
             }
         } catch (IOException e) {
             e.printStackTrace();
