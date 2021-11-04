@@ -1,4 +1,6 @@
-package webserver;
+package webserver.Model;
+
+import webserver.Controller.RequestHandler;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -22,9 +24,10 @@ public class Server {
     public void start() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             while (true) {
-                RequestHandler requestHandler = new RequestHandler(fileName,webAppPath,serverSocket.accept());
+                Socket clientSocket = serverSocket.accept();
                 new Thread(() -> {
                     try {
+                        RequestHandler requestHandler = new RequestHandler(fileName,webAppPath,clientSocket);
                         requestHandler.handle();
                     } catch (IOException e) {
                         e.printStackTrace();
