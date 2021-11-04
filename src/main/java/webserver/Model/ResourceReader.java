@@ -16,14 +16,19 @@ public class ResourceReader {
 
     public String getContent() throws IOException {
         log.info(String.format("Read file by path - %s", pathToFile));
+        String content = "";
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(pathToFile))) {
             String s;
             StringBuilder stringBuilder = new StringBuilder();
             while ((s = bufferedReader.readLine()) != null) {
                 stringBuilder.append(s);
             }
-            return stringBuilder.toString();
+            content = stringBuilder.toString();
+        } catch (IOException e) {
+            log.error(String.format("Cannot find file with %s path", pathToFile));
+            e.printStackTrace();
         }
+        return content;
     }
 
 }

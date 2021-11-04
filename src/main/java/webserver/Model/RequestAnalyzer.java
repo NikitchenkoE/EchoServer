@@ -28,7 +28,7 @@ public class RequestAnalyzer {
     }
 
     public String getPath() {
-        String pathToFile = errorPagePath;
+        String pathToFile = "";
         Request request = getRequest();
         String pathPart = request.getUri();
         if (pathPart.contains(webPath)) {
@@ -41,6 +41,8 @@ public class RequestAnalyzer {
                 pathToFile = pathPart;
                 status = true;
             }
+        }else {
+            pathToFile = errorPagePath;
         }
         log.info(String.format("Path sent to ResourceReader - %s", pathToFile));
         return pathToFile;

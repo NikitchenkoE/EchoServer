@@ -22,7 +22,7 @@ public class RequestHandler {
         this.errorPagePath = errorPageName;
     }
 
-    public void handle() throws IOException {
+    public void handle(){
         log.info("Client connected");
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
              BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))) {
@@ -32,6 +32,8 @@ public class RequestHandler {
             ResponseWriter responseWriter = new ResponseWriter(bufferedWriter, resourceReader.getContent(), errorPagePath, requestAnalyzer.getStatus());
 
             responseWriter.response();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

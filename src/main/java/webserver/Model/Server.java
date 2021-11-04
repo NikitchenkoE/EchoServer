@@ -7,6 +7,7 @@ import webserver.Controller.RequestHandler;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+
 @Log4j2
 public class Server {
     private static final String DEFAULT_ERROR_PAGE = "src/main/resources/webapp/bat_path.html";
@@ -31,12 +32,8 @@ public class Server {
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 new Thread(() -> {
-                    try {
-                        RequestHandler requestHandler = new RequestHandler(fileName, webAppPath, clientSocket, errorPagePath);
-                        requestHandler.handle();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    RequestHandler requestHandler = new RequestHandler(fileName, webAppPath, clientSocket, errorPagePath);
+                    requestHandler.handle();
                 }).start();
             }
         } catch (IOException e) {
