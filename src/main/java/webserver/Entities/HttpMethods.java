@@ -4,5 +4,5 @@ public enum HttpMethods {
     GET,
     POST,
     DELETE,
-    UPDATE;
+    UPDATE
 }

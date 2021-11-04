@@ -11,7 +11,7 @@ public class RequestHandler {
     private final String fileName;
     private final String webAppPath;
     private final String errorPagePath;
-    private Socket clientSocket;
+    private final Socket clientSocket;
 
     public RequestHandler(String fileName, String resourcesPath, Socket clientSocket, String errorPageName) {
         this.clientSocket = clientSocket;
