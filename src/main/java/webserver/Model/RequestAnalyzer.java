@@ -1,5 +1,6 @@
 package webserver.Model;
 
+import lombok.extern.log4j.Log4j2;
 import webserver.Entities.HttpMethods;
 import webserver.Entities.Request;
 
@@ -10,6 +11,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@Log4j2
 public class RequestAnalyzer {
     private final String webPath;
     private final String fileName;
@@ -40,6 +42,7 @@ public class RequestAnalyzer {
                 status = true;
             }
         }
+        log.info(String.format("Path sent to ResourceReader - %s", pathToFile));
         return pathToFile;
     }
 
@@ -61,7 +64,7 @@ public class RequestAnalyzer {
         request.setHttpMethod(getHttpMethod(stringsByHttpRequest));
         request.setUri(getUri(stringsByHttpRequest, request));
         request.setHeaders(getHeaders(stringsByHttpRequest));
-
+        log.info(String.format("Get URI by client - %s", request.getUri()));
         return request;
     }
 

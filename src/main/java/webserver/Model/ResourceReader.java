@@ -1,9 +1,12 @@
 package webserver.Model;
 
+import lombok.extern.log4j.Log4j2;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+@Log4j2
 public class ResourceReader {
     private final String pathToFile;
 
@@ -12,6 +15,7 @@ public class ResourceReader {
     }
 
     public String getContent() throws IOException {
+        log.info(String.format("Read file by path - %s", pathToFile));
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(pathToFile))) {
             String s;
             StringBuilder stringBuilder = new StringBuilder();

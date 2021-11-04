@@ -1,5 +1,6 @@
 package webserver.Controller;
 
+import lombok.extern.log4j.Log4j2;
 import webserver.Model.RequestAnalyzer;
 import webserver.Model.ResourceReader;
 import webserver.Model.ResponseWriter;
@@ -7,6 +8,7 @@ import webserver.Model.ResponseWriter;
 import java.io.*;
 import java.net.Socket;
 
+@Log4j2
 public class RequestHandler {
     private final String fileName;
     private final String webAppPath;
@@ -21,6 +23,7 @@ public class RequestHandler {
     }
 
     public void handle() throws IOException {
+        log.info("Client connected");
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
              BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))) {
 

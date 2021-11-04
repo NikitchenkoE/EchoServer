@@ -1,11 +1,13 @@
 package webserver.Model;
 
+
+import lombok.extern.log4j.Log4j2;
 import webserver.Controller.RequestHandler;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-
+@Log4j2
 public class Server {
     private static final String DEFAULT_ERROR_PAGE = "src/main/resources/webapp/bat_path.html";
     private static final int DEFAULT_PORT = 8080;
@@ -25,6 +27,7 @@ public class Server {
 
     public void start() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
+            log.info("Server started");
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 new Thread(() -> {
