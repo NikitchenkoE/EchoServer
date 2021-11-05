@@ -21,7 +21,7 @@ public class ResourceReader {
             String s;
             StringBuilder stringBuilder = new StringBuilder();
             while ((s = bufferedReader.readLine()) != null) {
-                stringBuilder.append(s);
+                stringBuilder.append(s).append("\n");
             }
             content = stringBuilder.toString();
         } catch (IOException e) {
