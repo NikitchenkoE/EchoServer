@@ -11,14 +11,12 @@ public class ResponseWriter {
     private final String HTTP_STATUS_404 = "HTTP/1.1 404 Not Found";
     private final BufferedWriter bufferedWriter;
     private final String content;
-    private final String errorPagePath;
     private final boolean status;
 
 
-    public ResponseWriter(BufferedWriter bufferedWriter, String content, String errorPagePath, boolean status) {
+    public ResponseWriter(BufferedWriter bufferedWriter, String content, boolean status) {
         this.bufferedWriter = bufferedWriter;
         this.content = content;
-        this.errorPagePath = errorPagePath;
         this.status = status;
     }
 
@@ -40,12 +38,11 @@ public class ResponseWriter {
 
     private void badRequest() {
         log.info(String.format("Status - %s", HTTP_STATUS_404));
-        ResourceReader resourceReader = new ResourceReader(errorPagePath);
         try {
             bufferedWriter.write(HTTP_STATUS_404);
             bufferedWriter.newLine();
             bufferedWriter.newLine();
-            bufferedWriter.write(resourceReader.getContent());
+            bufferedWriter.write(content);
         } catch (IOException e) {
             e.printStackTrace();
         }

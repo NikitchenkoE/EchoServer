@@ -13,42 +13,13 @@ import java.util.stream.Collectors;
 
 @Log4j2
 public class RequestAnalyzer {
-    private final String webPath;
-    private final String fileName;
     private final BufferedReader bufferedReader;
-    private final String errorPagePath;
-    private boolean status = false;
 
-
-    public RequestAnalyzer(String webPath, String fileName, BufferedReader bufferedReader, String errorPagePath) {
-        this.webPath = webPath;
-        this.fileName = fileName;
+    public RequestAnalyzer(BufferedReader bufferedReader) {
         this.bufferedReader = bufferedReader;
-        this.errorPagePath = errorPagePath;
     }
 
-    public String getPath() {
-        String pathToFile = "";
-        Request request = getRequest();
-        String pathPart = request.getUri();
-        if (pathPart.contains(webPath)) {
-
-            if (new File(pathPart + fileName).exists()) {
-                pathToFile = pathPart.concat(fileName);
-                status = true;
-
-            } else if (new File(pathPart).exists()) {
-                pathToFile = pathPart;
-                status = true;
-            }
-        }else {
-            pathToFile = errorPagePath;
-        }
-        log.info(String.format("Path sent to ResourceReader - %s", pathToFile));
-        return pathToFile;
-    }
-
-    private Request getRequest() {
+    public Request getRequest() {
         Request request = new Request();
         StringBuilder stringBuilder = new StringBuilder();
         String receivedRequest;
@@ -72,24 +43,24 @@ public class RequestAnalyzer {
 
     private Enum<HttpMethods> getHttpMethod(List<String> requestLines) {
         String method = requestLines.stream()
-                                    .map(s -> Pattern.compile(" ").split(s))
-                                    .flatMap(Arrays::stream)
-                                    .findFirst()
-                                    .orElse(null);
+                .map(s -> Pattern.compile(" ").split(s))
+                .flatMap(Arrays::stream)
+                .findFirst()
+                .orElse(null);
 
         return HttpMethods.valueOf(method);
     }
 
     private String getUri(List<String> requestLines, Request request) {
         String uri = requestLines.stream()
-                                .filter(s -> s.contains(request.getHttpMethod().toString()))
-                                .collect(Collectors.toList())
-                                .stream()
-                                .map(s -> Pattern.compile(" ").split(s))
-                                .flatMap(Arrays::stream)
-                                .filter(str -> str.contains("/"))
-                                .findFirst()
-                                .orElse(null);
+                .filter(s -> s.contains(request.getHttpMethod().toString()))
+                .collect(Collectors.toList())
+                .stream()
+                .map(s -> Pattern.compile(" ").split(s))
+                .flatMap(Arrays::stream)
+                .filter(str -> str.contains("/"))
+                .findFirst()
+                .orElse(null);
         StringBuilder stringBuilder = new StringBuilder(Objects.requireNonNull(uri));
 
         stringBuilder.delete(0, 1);
@@ -99,17 +70,14 @@ public class RequestAnalyzer {
     private Map<String, String> getHeaders(List<String> requestLines) {
         Map<String, String> headers = new HashMap<>();
         requestLines.stream()
-                    .filter(s -> s.contains(":"))
-                    .collect(Collectors.toList())
-                    .forEach(s -> {
-                        String[] partsOfHeader = Pattern.compile(":").split(s);
-                        headers.put(partsOfHeader[0], partsOfHeader[1]);
-                    });
+                .filter(s -> s.contains(":"))
+                .collect(Collectors.toList())
+                .forEach(s -> {
+                    String[] partsOfHeader = Pattern.compile(":").split(s);
+                    headers.put(partsOfHeader[0], partsOfHeader[1]);
+                });
 
         return headers;
     }
 
-    public boolean getStatus() {
-        return status;
-    }
 }
