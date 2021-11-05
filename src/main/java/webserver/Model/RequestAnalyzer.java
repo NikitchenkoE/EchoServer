@@ -27,8 +27,8 @@ public class RequestAnalyzer {
             while (!(receivedRequest = bufferedReader.readLine()).isEmpty()) {
                 stringBuilder.append(receivedRequest).append("\n");
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            throw new RuntimeException(String.format("Exception in getRequest() method in RequestAnalyzer.class by reading next request: %s, with next info %s", stringBuilder, e));
         }
         receivedRequest = stringBuilder.toString();
         List<String> stringsByHttpRequest = Arrays.asList(Pattern.compile("\n").split(receivedRequest));
@@ -62,17 +62,16 @@ public class RequestAnalyzer {
                 .orElse(null);
         StringBuilder stringBuilder = new StringBuilder(Objects.requireNonNull(uri));
 
-        stringBuilder.delete(0, 1);
-        return stringBuilder.toString();
+        return stringBuilder.substring(1);
     }
 
-    private Map<String, String> getHeaders(List<String> requestLines) {
-        Map<String, String> headers = new HashMap<>();
+    private HashMap<String, String> getHeaders(List<String> requestLines) {
+        HashMap<String, String> headers = new HashMap<>();
         requestLines.stream()
                 .filter(s -> s.contains(":"))
                 .collect(Collectors.toList())
                 .forEach(s -> {
-                    String[] partsOfHeader = Pattern.compile(":").split(s);
+                    String[] partsOfHeader = Pattern.compile(": ").split(s);
                     headers.put(partsOfHeader[0], partsOfHeader[1]);
                 });
 
