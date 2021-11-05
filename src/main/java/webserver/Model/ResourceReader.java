@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.StringJoiner;
 
 @Log4j2
 public class ResourceReader {
@@ -23,36 +24,37 @@ public class ResourceReader {
         this.errorPagePath = errorPagePath;
     }
 
-    public String getContent() throws IOException {
+    public String getContent() {
         log.info(String.format("Read file by path - %s", getPath()));
         String content = "";
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(getPath()))) {
             String s;
-            StringBuilder stringBuilder = new StringBuilder();
+            StringJoiner stringJoiner = new StringJoiner("\n");
             while ((s = bufferedReader.readLine()) != null) {
-                stringBuilder.append(s).append("\n");
+                stringJoiner.add(s);
             }
-            content = stringBuilder.toString();
+            content = stringJoiner.toString();
         } catch (IOException e) {
             log.error(String.format("Cannot find file with %s path", getPath()));
-            e.printStackTrace();
+            throw new RuntimeException(String.format("Exception in getContent() in ResourceReader.class caused by %s", e));
         }
         return content;
     }
 
 
     private String getPath() {
-        String pathToFile = "";
+        String pathToFile = errorPagePath;
         String uri = request.getUri();
-
         if (uri.equals(webPath)) {
-            pathToFile = uri.concat(fileName);
-            status = true;
+
+            if (new File(uri.concat(fileName)).exists()) {
+                pathToFile = uri.concat(fileName);
+                status = true;
+            }
+
         } else if (uri.contains(webPath) && new File(uri).exists()) {
             pathToFile = uri;
             status = true;
-        } else {
-            pathToFile = errorPagePath;
         }
         log.info(String.format("Path sent to ResourceReader - %s", pathToFile));
         return pathToFile;
