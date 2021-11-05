@@ -30,7 +30,6 @@ public class ResponseWriter {
                 bufferedWriter.newLine();
                 bufferedWriter.newLine();
                 bufferedWriter.write(content);
-                bufferedWriter.flush();
             } else {
                 badRequest();
             }
@@ -47,7 +46,6 @@ public class ResponseWriter {
             bufferedWriter.newLine();
             bufferedWriter.newLine();
             bufferedWriter.write(resourceReader.getContent());
-            bufferedWriter.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
