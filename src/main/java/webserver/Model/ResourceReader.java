@@ -43,16 +43,14 @@ public class ResourceReader {
 
     private String getPath() {
         String pathToFile = "";
-        String pathPart = request.getUri();
-        if (pathPart.contains(webPath)) {
-            if (new File(pathPart + fileName).exists()) {
-                pathToFile = pathPart.concat(fileName);
-                status = true;
+        String uri = request.getUri();
 
-            } else if (new File(pathPart).exists()) {
-                pathToFile = pathPart;
-                status = true;
-            }
+        if (uri.equals(webPath)) {
+            pathToFile = uri.concat(fileName);
+            status = true;
+        } else if (uri.contains(webPath) && new File(uri).exists()) {
+            pathToFile = uri;
+            status = true;
         } else {
             pathToFile = errorPagePath;
         }

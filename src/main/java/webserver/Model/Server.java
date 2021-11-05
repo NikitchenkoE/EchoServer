@@ -31,10 +31,12 @@ public class Server {
             log.info("Server started");
             while (true) {
                 Socket clientSocket = serverSocket.accept();
-                new Thread(() -> {
+                Thread thread = new Thread(() -> {
                     RequestHandler requestHandler = new RequestHandler(fileName, webAppPath, clientSocket, errorPagePath);
                     requestHandler.handle();
-                }).start();
+                });
+                thread.start();
+                thread.interrupt();
             }
         } catch (IOException e) {
             e.printStackTrace();
