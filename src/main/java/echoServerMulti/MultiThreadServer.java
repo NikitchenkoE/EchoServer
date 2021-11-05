@@ -25,9 +25,9 @@ public class MultiThreadServer {
     }
 
 
-    public static void addHandler(Socket socket) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))) {
+    public static void addHandler(Socket clientSocket) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))) {
 
             String line = "";
             while ((line = reader.readLine()) != null) {
