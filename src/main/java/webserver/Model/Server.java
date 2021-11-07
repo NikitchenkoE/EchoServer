@@ -39,7 +39,7 @@ public class Server {
                 thread.interrupt();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(String.format("Exception in start() method caused by %s",e));
         }
     }
 

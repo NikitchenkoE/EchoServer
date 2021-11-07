@@ -33,7 +33,7 @@ public class RequestHandler {
 
             responseWriter.response();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(String.format("Exception in handle() method in Request handle caused by %s",e));
         }
     }
 }

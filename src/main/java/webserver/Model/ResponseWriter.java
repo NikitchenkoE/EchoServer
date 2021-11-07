@@ -32,7 +32,7 @@ public class ResponseWriter {
                 badRequest();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(String.format("Exception in response() method caused by %s",e));
         }
     }
 
@@ -44,7 +44,7 @@ public class ResponseWriter {
             bufferedWriter.newLine();
             bufferedWriter.write(content);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(String.format("Exception in badRequest() method caused by %s",e));
         }
     }
 }
