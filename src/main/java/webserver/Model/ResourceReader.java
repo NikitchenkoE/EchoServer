@@ -26,7 +26,7 @@ public class ResourceReader {
 
     public String getContent() {
         log.info(String.format("Read file by path - %s", getPath()));
-        String content = "";
+        String content;
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(getPath()))) {
             String s;
             StringJoiner stringJoiner = new StringJoiner("\n");
