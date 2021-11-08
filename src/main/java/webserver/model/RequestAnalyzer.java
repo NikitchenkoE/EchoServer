@@ -1,9 +1,9 @@
-package webserver.Model;
+package webserver.model;
 
 import lombok.extern.log4j.Log4j2;
-import webserver.Entities.HttpMethod;
-import webserver.Entities.Request;
-import webserver.Entities.ResponseStatus;
+import webserver.entities.HttpMethod;
+import webserver.entities.Request;
+import webserver.entities.ResponseStatus;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Log4j2
 public class RequestAnalyzer {

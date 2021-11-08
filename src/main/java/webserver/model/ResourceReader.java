@@ -1,7 +1,7 @@
-package webserver.Model;
+package webserver.model;
 
 import lombok.extern.log4j.Log4j2;
-import webserver.Entities.Request;
+import webserver.entities.Request;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

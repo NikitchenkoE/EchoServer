@@ -1,8 +1,8 @@
-package webserver.Model;
+package webserver.model;
 
 
 import lombok.extern.log4j.Log4j2;
-import webserver.Handler.RequestHandler;
+import webserver.handler.RequestHandler;
 import webserver.constans.Constants;
 
 import java.io.File;

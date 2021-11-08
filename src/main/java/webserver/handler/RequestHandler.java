@@ -1,10 +1,10 @@
-package webserver.Handler;
+package webserver.handler;
 
 import lombok.extern.log4j.Log4j2;
-import webserver.Entities.Request;
-import webserver.Model.RequestAnalyzer;
-import webserver.Model.ResourceReader;
-import webserver.Model.ResponseWriter;
+import webserver.entities.Request;
+import webserver.model.RequestAnalyzer;
+import webserver.model.ResourceReader;
+import webserver.model.ResponseWriter;
 
 import java.io.*;
 import java.net.Socket;

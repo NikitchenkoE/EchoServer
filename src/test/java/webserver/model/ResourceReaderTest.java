@@ -1,9 +1,4 @@
-package webserver.Model;
-
-import org.junit.Test;
-import webserver.Entities.Request;
-
-import static org.junit.Assert.*;
+package webserver.model;
 
 public class ResourceReaderTest {
 //

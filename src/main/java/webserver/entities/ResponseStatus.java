@@ -1,4 +1,4 @@
-package webserver.Entities;
+package webserver.entities;
 
 public enum ResponseStatus {
     HTTP_STATUS_200("HTTP/1.1 200 OK"),

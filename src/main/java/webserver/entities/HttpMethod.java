@@ -1,4 +1,4 @@
-package webserver.Entities;
+package webserver.entities;
 
 public enum HttpMethod {
     GET,

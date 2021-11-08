@@ -1,7 +1,7 @@
 package webserver;
 
 import lombok.extern.log4j.Log4j2;
-import webserver.Model.Server;
+import webserver.model.Server;
 
 @Log4j2
 public class Starter {

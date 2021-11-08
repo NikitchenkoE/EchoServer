@@ -1,8 +1,8 @@
-package webserver.Model;
+package webserver.model;
 
 import org.junit.Test;
-import webserver.Entities.Request;
-import webserver.Entities.ResponseStatus;
+import webserver.entities.Request;
+import webserver.entities.ResponseStatus;
 
 import java.io.*;
 import java.util.HashMap;
@@ -15,36 +15,52 @@ public class RequestAnalyzerTest {
     String fileName = "testFile.txt";
     String errorPagePath = "src/test/java/webserver/testFiles/testErrorFile.txt";
 
-    String getRequest = "GET /src/test/java/webserver/testFiles/ HTTP/1.1 \n" +
-            "User-Agent: Mozilla/4.0 (compatible; MSIE5.01; Windows NT)\n" +
-            "Host: www.tutorialspoint.com\n" +
-            "\n";
+    String getRequest = """
+            GET /src/test/java/webserver/testFiles/ HTTP/1.1\s
+            User-Agent: Mozilla/4.0 (compatible; MSIE5.01; Windows NT)
+            Host: www.tutorialspoint.com
 
-    String getRequestFullLink = "GET /src/test/java/webserver/testFiles/testErrorFile.txt HTTP/1.1 \n" +
-            "User-Agent: Mozilla/4.0 (compatible; MSIE5.01; Windows NT)\n" +
-            "Host: www.tutorialspoint.com\n" +
-            "\n";
+            """;
 
-    String postRequest = "POST /hello.htm HTTP/1.1 \n" +
-            "User-Agent: Mozilla/4.0 (compatible; MSIE5.01; Windows NT)\n" +
-            "\n";
+    String getRequestFullLink = """
+            GET /src/test/java/webserver/testFiles/testErrorFile.txt HTTP/1.1\s
+            User-Agent: Mozilla/4.0 (compatible; MSIE5.01; Windows NT)
+            Host: www.tutorialspoint.com
+
+            """;
+
+    String postRequest = """
+            POST /hello.htm HTTP/1.1\s
+            User-Agent: Mozilla/4.0 (compatible; MSIE5.01; Windows NT)
+
+            """;
 
     String badRequest = "Some idiotic text";
 
-    String badLinkRequest = "GET /srst/java/wver/tesles/ HTTP/1.1 \n" +
-            "User-Agent: Mozilla/4.0 (compatible; MSIE5.01; Windows NT)\n" + "\n";
+    String badLinkRequest = """
+            GET /srst/java/wver/tesles/ HTTP/1.1\s
+            User-Agent: Mozilla/4.0 (compatible; MSIE5.01; Windows NT)
 
-    String emptyLinkRequest = "GET HTTP/1.1 \n" +
-            "User-Agent: Mozilla/4.0 (compatible; MSIE5.01; Windows NT)\n" + "\n";
+            """;
 
-    String getRequestWithWrongFail = "GET /src/test/java/webserver/testFiles/testle.txt HTTP/1.1 \n" +
-            "Host: www.tutorialspoint.com\n" +
-            "\n";
+    String emptyLinkRequest = """
+            GET HTTP/1.1\s
+            User-Agent: Mozilla/4.0 (compatible; MSIE5.01; Windows NT)
 
-    String getRequestWithWrongMethod = "WRONG /src/test/java/webserver/testFiles/testle.txt HTTP/1.1 \n" +
-            "Host: www.tutorialspoint.com\n" +
-            "Host: www.tutorialspoint.com\n" +
-            "\n";
+            """;
+
+    String getRequestWithWrongFail = """
+            GET /src/test/java/webserver/testFiles/testle.txt HTTP/1.1\s
+            Host: www.tutorialspoint.com
+
+            """;
+
+    String getRequestWithWrongMethod = """
+            WRONG /src/test/java/webserver/testFiles/testle.txt HTTP/1.1\s
+            Host: www.tutorialspoint.com
+            Host: www.tutorialspoint.com
+
+            """;
 
 
 
