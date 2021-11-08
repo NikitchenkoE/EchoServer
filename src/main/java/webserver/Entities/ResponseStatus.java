@@ -5,7 +5,7 @@ public enum ResponseStatus {
     HTTP_STATUS_400("HTTP/1.1 400 Bad Request"),
     HTTP_STATUS_404("HTTP/1.1 404 Not Found"),
     HTTP_STATUS_405("HTTP/1.1 405 Method Not Allowed"),
-    HTTP_STATUS_500("");
+    HTTP_STATUS_500("HTTP/1.1 500 Internal Server Error");
 
     private final String response;
 
