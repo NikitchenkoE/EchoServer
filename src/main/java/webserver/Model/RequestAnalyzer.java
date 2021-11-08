@@ -5,7 +5,6 @@ import webserver.Entities.HttpMethods;
 import webserver.Entities.Request;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -20,22 +19,22 @@ public class RequestAnalyzer {
 
     public Request getRequest() {
         Request request = new Request();
-        StringBuilder stringBuilder = new StringBuilder();
+        List<String> stringsByHttpRequest = new ArrayList<>();
         String receivedRequest;
 
         try {
             while (!(receivedRequest = bufferedReader.readLine()).isEmpty()) {
-                stringBuilder.append(receivedRequest).append("\n");
+                stringsByHttpRequest.add(receivedRequest);
             }
         } catch (Exception e) {
-            throw new RuntimeException(String.format("Exception in getRequest() method in RequestAnalyzer.class by reading next request: %s, with next info %s", stringBuilder, e));
+            String message = String.format("Exception by reading next request: %s, with next info %s", stringsByHttpRequest, e);
+            throw new RuntimeException(message, e);
         }
-        receivedRequest = stringBuilder.toString();
-        List<String> stringsByHttpRequest = Arrays.asList(Pattern.compile("\n").split(receivedRequest));
 
         request.setHttpMethod(getHttpMethod(stringsByHttpRequest));
         request.setUri(getUri(stringsByHttpRequest, request));
         request.setHeaders(getHeaders(stringsByHttpRequest));
+
         log.info(String.format("Get URI by client - %s", request.getUri()));
         return request;
     }
