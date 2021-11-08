@@ -59,7 +59,7 @@ public class RequestAnalyzer {
                 .filter(str -> str.contains("/"))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Null value not supported"));
-        StringBuilder stringBuilder = new StringBuilder(Objects.requireNonNull(uri));
+        StringBuilder stringBuilder = new StringBuilder(uri);
 
         return stringBuilder.substring(1);
     }
