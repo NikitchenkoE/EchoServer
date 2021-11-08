@@ -45,7 +45,7 @@ public class RequestAnalyzer {
                 .map(s -> Pattern.compile(" ").split(s))
                 .flatMap(Arrays::stream)
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new RuntimeException("Null value not supported"));
 
         return HttpMethods.valueOf(method);
     }
@@ -59,7 +59,7 @@ public class RequestAnalyzer {
                 .flatMap(Arrays::stream)
                 .filter(str -> str.contains("/"))
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new RuntimeException("Null value not supported"));
         StringBuilder stringBuilder = new StringBuilder(Objects.requireNonNull(uri));
 
         return stringBuilder.substring(1);
