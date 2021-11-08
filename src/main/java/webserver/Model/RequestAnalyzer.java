@@ -100,11 +100,8 @@ public class RequestAnalyzer {
         HashMap<String, String> headers = new HashMap<>();
         requestLines.stream()
                 .filter(s -> s.contains(":"))
-                .collect(Collectors.toList())
-                .forEach(s -> {
-                    String[] partsOfHeader = patternDeleteColonAndOneSpace.split(s);
-                    headers.put(partsOfHeader[0], partsOfHeader[1]);
-                });
+                .map(patternDeleteColonAndOneSpace::split)
+                .forEach(s -> headers.put(s[0], s[1]));
 
         return headers;
     }
