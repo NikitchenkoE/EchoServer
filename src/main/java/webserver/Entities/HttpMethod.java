@@ -1,6 +1,6 @@
 package webserver.Entities;
 
-public enum HttpMethods {
+public enum HttpMethod {
     GET,
     POST,
     DELETE,

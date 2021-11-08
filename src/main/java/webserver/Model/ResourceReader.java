@@ -15,7 +15,7 @@ public class ResourceReader {
     private final String webPath;
     private final String fileName;
     private final String errorPagePath;
-    private boolean status = false;
+    private String responseStatus;
 
     public ResourceReader(Request request, String webPath, String fileName, String errorPagePath) {
         this.request = request;
@@ -37,7 +37,7 @@ public class ResourceReader {
         } catch (IOException e) {
             log.error("Cannot find file with {} path", getPath());
             String message = String.format("Exception in getContent() in ResourceReader.class caused by %s", e);
-            throw new RuntimeException(message,e);
+            throw new RuntimeException(message, e);
         }
         return content;
     }
@@ -45,24 +45,27 @@ public class ResourceReader {
 
     private String getPath() {
         String pathToFile = errorPagePath;
+        responseStatus = "HTTP/1.1 404 Not Found";
+
         String uri = request.getUri();
         if (uri.equals(webPath)) {
 
             if (new File(uri.concat(fileName)).exists()) {
                 pathToFile = uri.concat(fileName);
-                status = true;
+                responseStatus = "HTTP/1.1 200 OK";
             }
 
         } else if (uri.contains(webPath) && new File(uri).exists()) {
             pathToFile = uri;
-            status = true;
+            responseStatus = "HTTP/1.1 200 OK";
         }
         log.info("Path sent to ResourceReader - {}", pathToFile);
         return pathToFile;
     }
 
-    public boolean getStatus() {
-        return status;
+
+    public String getResponseStatus() {
+        return responseStatus;
     }
 
 }

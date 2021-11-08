@@ -8,6 +8,6 @@ import java.util.HashMap;
 public class Request {
     private String uri;
     private HashMap<String, String> headers;
-    private Enum<HttpMethods> httpMethod;
+    private Enum<HttpMethod> httpMethod;
 
 }

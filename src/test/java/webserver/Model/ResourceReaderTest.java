@@ -11,6 +11,8 @@ public class ResourceReaderTest {
     String pathToFile = "src/test/java/webserver/testFiles/testFile.txt";
     String fileName = "testFile.txt";
     String errorPagePath = "src/test/java/webserver/testFiles/testErrorFile.txt";
+    private final String HTTP_STATUS_200 = "HTTP/1.1 200 OK";
+    private final String HTTP_STATUS_404 = "HTTP/1.1 404 Not Found";
 
     @Test
     public void getContentByWebPathAbdFileName() {
@@ -71,7 +73,7 @@ public class ResourceReaderTest {
         request.setUri(webPath);
         ResourceReader resourceReader = new ResourceReader(request, webPath, fileName, errorPagePath);
         resourceReader.getContent();
-        assertTrue(resourceReader.getStatus());
+        assertEquals(HTTP_STATUS_200, resourceReader.getResponseStatus());
     }
 
     @Test
@@ -80,7 +82,7 @@ public class ResourceReaderTest {
         request.setUri(pathToFile);
         ResourceReader resourceReader = new ResourceReader(request, webPath, fileName, errorPagePath);
         resourceReader.getContent();
-        assertTrue(resourceReader.getStatus());
+        assertEquals(HTTP_STATUS_200, resourceReader.getResponseStatus());
     }
 
     @Test
@@ -89,7 +91,7 @@ public class ResourceReaderTest {
         request.setUri("someProblemPath");
         ResourceReader resourceReader = new ResourceReader(request, webPath, fileName, errorPagePath);
         resourceReader.getContent();
-        assertFalse(resourceReader.getStatus());
+        assertEquals(HTTP_STATUS_404, resourceReader.getResponseStatus());
     }
 
     @Test
@@ -99,7 +101,7 @@ public class ResourceReaderTest {
         String webPathDifferent = "src/main/resources/webapp/";
         ResourceReader resourceReader = new ResourceReader(request, webPathDifferent, fileName, errorPagePath);
         resourceReader.getContent();
-        assertFalse(resourceReader.getStatus());
+        assertEquals(HTTP_STATUS_404, resourceReader.getResponseStatus());
     }
 
     @Test
@@ -109,6 +111,6 @@ public class ResourceReaderTest {
         String differentName = "notThatFile.txt";
         ResourceReader resourceReader = new ResourceReader(request, webPath, differentName, errorPagePath);
         resourceReader.getContent();
-        assertFalse(resourceReader.getStatus());
+        assertEquals(HTTP_STATUS_404, resourceReader.getResponseStatus());
     }
 }

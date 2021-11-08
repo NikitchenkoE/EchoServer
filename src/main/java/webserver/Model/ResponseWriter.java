@@ -11,18 +11,18 @@ public class ResponseWriter {
     private final String HTTP_STATUS_404 = "HTTP/1.1 404 Not Found";
     private final BufferedWriter bufferedWriter;
     private final String content;
-    private final boolean status;
+    private final String responseStatus;
 
 
-    public ResponseWriter(BufferedWriter bufferedWriter, String content, boolean status) {
+    public ResponseWriter(BufferedWriter bufferedWriter, String content, String responseStatus) {
         this.bufferedWriter = bufferedWriter;
         this.content = content;
-        this.status = status;
+        this.responseStatus = responseStatus;
     }
 
     public void response() {
         try {
-            if (status) {
+            if (responseStatus.equals(HTTP_STATUS_200)) {
                 log.info(String.format("Status - %s", HTTP_STATUS_200));
                 bufferedWriter.write(HTTP_STATUS_200);
                 bufferedWriter.newLine();

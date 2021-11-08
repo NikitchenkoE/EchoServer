@@ -1,7 +1,7 @@
 package webserver.Model;
 
 import lombok.extern.log4j.Log4j2;
-import webserver.Entities.HttpMethods;
+import webserver.Entities.HttpMethod;
 import webserver.Entities.Request;
 
 import java.io.BufferedReader;
@@ -39,14 +39,14 @@ public class RequestAnalyzer {
         return request;
     }
 
-    private Enum<HttpMethods> getHttpMethod(List<String> requestLines) {
+    private Enum<HttpMethod> getHttpMethod(List<String> requestLines) {
         String method = requestLines.stream()
                 .map(s -> Pattern.compile(" ").split(s))
                 .flatMap(Arrays::stream)
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Null value not supported"));
 
-        return HttpMethods.valueOf(method);
+        return HttpMethod.valueOf(method);
     }
 
     private String getUri(List<String> requestLines, Request request) {

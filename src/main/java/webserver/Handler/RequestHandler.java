@@ -29,7 +29,7 @@ public class RequestHandler {
 
             RequestAnalyzer requestAnalyzer = new RequestAnalyzer(bufferedReader);
             ResourceReader resourceReader = new ResourceReader(requestAnalyzer.getRequest(), webAppPath, fileName, errorPagePath);
-            ResponseWriter responseWriter = new ResponseWriter(bufferedWriter, resourceReader.getContent(), resourceReader.getStatus());
+            ResponseWriter responseWriter = new ResponseWriter(bufferedWriter, resourceReader.getContent(), resourceReader.getResponseStatus());
 
             responseWriter.response();
         } catch (IOException e) {
