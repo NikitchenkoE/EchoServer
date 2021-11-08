@@ -2,6 +2,7 @@ package webserver.handler;
 
 import lombok.extern.log4j.Log4j2;
 import webserver.entities.Request;
+import webserver.exceptions.ServerException;
 import webserver.model.RequestAnalyzer;
 import webserver.model.ResourceReader;
 import webserver.model.ResponseWriter;
@@ -16,11 +17,12 @@ public class RequestHandler {
     private final String errorPagePath;
     private final Socket clientSocket;
 
-    public RequestHandler(String fileName, String resourcesPath, Socket clientSocket, String errorPageName) {
+
+    public RequestHandler(String fileName, String resourcesPath, Socket clientSocket, String errorPagePath) {
         this.clientSocket = clientSocket;
         this.fileName = fileName;
         this.webAppPath = resourcesPath;
-        this.errorPagePath = errorPageName;
+        this.errorPagePath = errorPagePath;
     }
 
     public void handle() {
@@ -28,13 +30,20 @@ public class RequestHandler {
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
              BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))) {
 
-            RequestAnalyzer requestAnalyzer = new RequestAnalyzer(bufferedReader, webAppPath, fileName, errorPagePath);
+            RequestAnalyzer requestAnalyzer = new RequestAnalyzer(bufferedReader, webAppPath, fileName, errorPagePath, bufferedWriter);
             Request request = requestAnalyzer.getRequest();
-            ResourceReader resourceReader = new ResourceReader(request);
+            ResourceReader resourceReader = new ResourceReader(request, bufferedWriter);
             ResponseWriter responseWriter = new ResponseWriter(bufferedWriter, resourceReader.getContent(), request);
             responseWriter.response();
-        } catch (IOException e) {
-            throw new RuntimeException(String.format("Exception in handle() method in Request handle caused by %s", e));
+        } catch (IOException cause) {
+            String message = String.format("Exception in handle() method in Request handle caused by %s", cause);
+            throw new ServerException(message, cause, clientSocket);
+        } finally {
+            try {
+                clientSocket.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

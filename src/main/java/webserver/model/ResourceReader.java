@@ -2,8 +2,10 @@ package webserver.model;
 
 import lombok.extern.log4j.Log4j2;
 import webserver.entities.Request;
+import webserver.exceptions.ServerException;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.StringJoiner;
@@ -11,9 +13,11 @@ import java.util.StringJoiner;
 @Log4j2
 public class ResourceReader {
     private final Request request;
+    private final BufferedWriter bufferedWriter;
 
-    public ResourceReader(Request request) {
+    public ResourceReader(Request request, BufferedWriter bufferedWriter) {
         this.request = request;
+        this.bufferedWriter = bufferedWriter;
     }
 
     public String getContent() {
@@ -27,10 +31,10 @@ public class ResourceReader {
                 stringJoiner.add(s);
             }
             content = stringJoiner.toString();
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("Cannot find file with {} path", request.getResponsePath());
             String message = String.format("Exception in getContent() in ResourceReader.class caused by %s", e);
-            throw new RuntimeException(message, e);
+            throw new ServerException(message, e, bufferedWriter);
         }
         return content;
     }

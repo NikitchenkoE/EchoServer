@@ -4,8 +4,10 @@ import lombok.extern.log4j.Log4j2;
 import webserver.entities.HttpMethod;
 import webserver.entities.Request;
 import webserver.entities.ResponseStatus;
+import webserver.exceptions.ServerException;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,15 +20,17 @@ public class RequestAnalyzer {
     private final Pattern patternDeleteSpaces = Pattern.compile(" ");
     private final Pattern patternDeleteColonAndOneSpace = Pattern.compile(": ");
     private final BufferedReader bufferedReader;
+    private final BufferedWriter bufferedWriter;
     private final String webPath;
     private final String fileName;
     private final String errorPagePath;
 
-    public RequestAnalyzer(BufferedReader bufferedReader, String webPath, String fileName, String errorPagePath) {
+    public RequestAnalyzer(BufferedReader bufferedReader, String webPath, String fileName, String errorPagePath, BufferedWriter bufferedWriter) {
         this.bufferedReader = bufferedReader;
         this.webPath = webPath;
         this.fileName = fileName;
         this.errorPagePath = errorPagePath;
+        this.bufferedWriter = bufferedWriter;
     }
 
     public Request getRequest() {
@@ -40,7 +44,7 @@ public class RequestAnalyzer {
             }
         } catch (Exception e) {
             String message = String.format("Exception by reading next request: %s, with next info %s", stringsByHttpRequest, e);
-            throw new RuntimeException(message, e);
+            throw new ServerException(message, e, bufferedWriter);
         }
         request.setHttpMethod(getHttpMethod(stringsByHttpRequest));
         request.setUri(getUri(stringsByHttpRequest, request));
@@ -71,7 +75,7 @@ public class RequestAnalyzer {
                 .map(s -> Pattern.compile(" ").split(s))
                 .flatMap(Arrays::stream)
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Null value not supported"));
+                .orElseThrow(() -> new ServerException("Null value not supported", new Throwable("null not supported"), bufferedWriter));
 
         try {
             httpMethod = HttpMethod.valueOf(method);
@@ -89,7 +93,7 @@ public class RequestAnalyzer {
                 .flatMap(Arrays::stream)
                 .filter(str -> str.contains("/"))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Null value not supported"));
+                .orElseThrow(() -> new ServerException("Null value not supported", new Throwable("null not supported"), bufferedWriter));
         StringBuilder stringBuilder = new StringBuilder(uri);
 
         return stringBuilder.substring(1);

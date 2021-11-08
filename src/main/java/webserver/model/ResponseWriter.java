@@ -2,6 +2,7 @@ package webserver.model;
 
 import lombok.extern.log4j.Log4j2;
 import webserver.entities.Request;
+import webserver.exceptions.ServerException;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -25,9 +26,9 @@ public class ResponseWriter {
             bufferedWriter.newLine();
             bufferedWriter.newLine();
             bufferedWriter.write(content);
-        } catch (IOException e) {
-            String message = String.format("Exception in badRequest() method caused by %s", e);
-            throw new RuntimeException(message, e);
+        } catch (IOException cause) {
+            String message = String.format("Exception in badRequest() method caused by %s", cause);
+            throw new ServerException(message, cause, bufferedWriter);
         }
     }
 

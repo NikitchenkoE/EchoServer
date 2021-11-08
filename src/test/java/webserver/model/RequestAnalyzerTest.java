@@ -3,6 +3,7 @@ package webserver.model;
 import org.junit.Test;
 import webserver.entities.Request;
 import webserver.entities.ResponseStatus;
+import webserver.exceptions.ServerException;
 
 import java.io.*;
 import java.util.HashMap;
@@ -63,11 +64,10 @@ public class RequestAnalyzerTest {
             """;
 
 
-
     @Test
     public void testGetRequestHttpMethodGet() {
         BufferedReader bufferedReader = new BufferedReader(new StringReader(getRequest));
-        requestAnalyzer = new RequestAnalyzer(bufferedReader, webPath, fileName, errorPagePath);
+        requestAnalyzer = new RequestAnalyzer(bufferedReader, webPath, fileName, errorPagePath, new BufferedWriter(new StringWriter()));
         Request request = requestAnalyzer.getRequest();
         String expected = "GET";
         String actual = request.getHttpMethod().toString();
@@ -77,7 +77,7 @@ public class RequestAnalyzerTest {
     @Test
     public void testGetRequestHttpMethodPost() {
         BufferedReader bufferedReader = new BufferedReader(new StringReader(postRequest));
-        requestAnalyzer = new RequestAnalyzer(bufferedReader, webPath, fileName, errorPagePath);
+        requestAnalyzer = new RequestAnalyzer(bufferedReader, webPath, fileName, errorPagePath, new BufferedWriter(new StringWriter()));
         Request request = requestAnalyzer.getRequest();
         String expected = "POST";
         String actual = request.getHttpMethod().toString();
@@ -87,7 +87,7 @@ public class RequestAnalyzerTest {
     @Test
     public void testGetRequestURI() {
         BufferedReader bufferedReader = new BufferedReader(new StringReader(getRequest));
-        requestAnalyzer = new RequestAnalyzer(bufferedReader, webPath, fileName, errorPagePath);
+        requestAnalyzer = new RequestAnalyzer(bufferedReader, webPath, fileName, errorPagePath, new BufferedWriter(new StringWriter()));
         Request request = requestAnalyzer.getRequest();
         String expected = "src/test/java/webserver/testFiles/";
         String actual = request.getUri();
@@ -97,7 +97,7 @@ public class RequestAnalyzerTest {
     @Test
     public void testGetRequestHeaders() {
         BufferedReader bufferedReader = new BufferedReader(new StringReader(getRequest));
-        requestAnalyzer = new RequestAnalyzer(bufferedReader, webPath, fileName, errorPagePath);
+        requestAnalyzer = new RequestAnalyzer(bufferedReader, webPath, fileName, errorPagePath, new BufferedWriter(new StringWriter()));
         Request request = requestAnalyzer.getRequest();
         HashMap<String, String> expected = new HashMap<>();
         expected.put("User-Agent", "Mozilla/4.0 (compatible; MSIE5.01; Windows NT)");
@@ -109,14 +109,14 @@ public class RequestAnalyzerTest {
     @Test
     public void testGetRequestException() {
         BufferedReader bufferedReader = new BufferedReader(new StringReader(badRequest));
-        requestAnalyzer = new RequestAnalyzer(bufferedReader, webPath, fileName, errorPagePath);
+        requestAnalyzer = new RequestAnalyzer(bufferedReader, webPath, fileName, errorPagePath, new BufferedWriter(new StringWriter()));
         assertThrows(RuntimeException.class, () -> requestAnalyzer.getRequest());
     }
 
     @Test
     public void testGetRequestResponse200() {
         BufferedReader bufferedReader = new BufferedReader(new StringReader(getRequest));
-        requestAnalyzer = new RequestAnalyzer(bufferedReader, webPath, fileName, errorPagePath);
+        requestAnalyzer = new RequestAnalyzer(bufferedReader, webPath, fileName, errorPagePath, new BufferedWriter(new StringWriter()));
         Request request = requestAnalyzer.getRequest();
         ResponseStatus expected = ResponseStatus.HTTP_STATUS_200;
         ResponseStatus actual = request.getResponseStatus();
@@ -126,7 +126,7 @@ public class RequestAnalyzerTest {
     @Test
     public void testGetRequestResponse200WithFullLink() {
         BufferedReader bufferedReader = new BufferedReader(new StringReader(getRequestFullLink));
-        requestAnalyzer = new RequestAnalyzer(bufferedReader, webPath, fileName, errorPagePath);
+        requestAnalyzer = new RequestAnalyzer(bufferedReader, webPath, fileName, errorPagePath, new BufferedWriter(new StringWriter()));
         Request request = requestAnalyzer.getRequest();
         ResponseStatus expected = ResponseStatus.HTTP_STATUS_200;
         ResponseStatus actual = request.getResponseStatus();
@@ -136,7 +136,7 @@ public class RequestAnalyzerTest {
     @Test
     public void testGetRequestResponse400() {
         BufferedReader bufferedReader = new BufferedReader(new StringReader(badLinkRequest));
-        requestAnalyzer = new RequestAnalyzer(bufferedReader, webPath, fileName, errorPagePath);
+        requestAnalyzer = new RequestAnalyzer(bufferedReader, webPath, fileName, errorPagePath, new BufferedWriter(new StringWriter()));
         Request request = requestAnalyzer.getRequest();
         ResponseStatus expected = ResponseStatus.HTTP_STATUS_400;
         ResponseStatus actual = request.getResponseStatus();
@@ -146,7 +146,7 @@ public class RequestAnalyzerTest {
     @Test
     public void testGetRequestResponse400ByEmptyURL() {
         BufferedReader bufferedReader = new BufferedReader(new StringReader(emptyLinkRequest));
-        requestAnalyzer = new RequestAnalyzer(bufferedReader, webPath, fileName, errorPagePath);
+        requestAnalyzer = new RequestAnalyzer(bufferedReader, webPath, fileName, errorPagePath, new BufferedWriter(new StringWriter()));
         Request request = requestAnalyzer.getRequest();
         ResponseStatus expected = ResponseStatus.HTTP_STATUS_400;
         ResponseStatus actual = request.getResponseStatus();
@@ -156,7 +156,7 @@ public class RequestAnalyzerTest {
     @Test
     public void testGetRequestResponse404() {
         BufferedReader bufferedReader = new BufferedReader(new StringReader(getRequestWithWrongFail));
-        requestAnalyzer = new RequestAnalyzer(bufferedReader, webPath, fileName, errorPagePath);
+        requestAnalyzer = new RequestAnalyzer(bufferedReader, webPath, fileName, errorPagePath, new BufferedWriter(new StringWriter()));
         Request request = requestAnalyzer.getRequest();
         ResponseStatus expected = ResponseStatus.HTTP_STATUS_404;
         ResponseStatus actual = request.getResponseStatus();
@@ -164,14 +164,13 @@ public class RequestAnalyzerTest {
     }
 
     @Test
-    public void testGetRequestResponse405(){
+    public void testGetRequestResponse405() {
         BufferedReader bufferedReader = new BufferedReader(new StringReader(getRequestWithWrongMethod));
-        requestAnalyzer = new RequestAnalyzer(bufferedReader, webPath, fileName, errorPagePath);
+        requestAnalyzer = new RequestAnalyzer(bufferedReader, webPath, fileName, errorPagePath, new BufferedWriter(new StringWriter()));
         Request request = requestAnalyzer.getRequest();
         ResponseStatus expected = ResponseStatus.HTTP_STATUS_405;
         ResponseStatus actual = request.getResponseStatus();
         assertEquals(expected, actual);
     }
-
 
 }
