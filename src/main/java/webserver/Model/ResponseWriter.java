@@ -21,23 +21,25 @@ public class ResponseWriter {
     }
 
     public void response() {
+        switch (responseStatus) {
+            case (HTTP_STATUS_200) -> oKResponse();
+            case (HTTP_STATUS_404) -> notFoundResponse();
+        }
+    }
+
+    private void oKResponse(){
         try {
-            if (responseStatus.equals(HTTP_STATUS_200)) {
-                log.info(String.format("Status - %s", HTTP_STATUS_200));
-                bufferedWriter.write(HTTP_STATUS_200);
-                bufferedWriter.newLine();
-                bufferedWriter.newLine();
-                bufferedWriter.write(content);
-            } else {
-                notFoundRequest();
-            }
-        } catch (IOException e) {
-            String message = String.format("Exception in response() method caused by %s", e);
+            bufferedWriter.write(HTTP_STATUS_200);
+            bufferedWriter.newLine();
+            bufferedWriter.newLine();
+            bufferedWriter.write(content);
+        }catch (IOException e) {
+            String message = String.format("Exception in badRequest() method caused by %s", e);
             throw new RuntimeException(message,e);
         }
     }
 
-    private void notFoundRequest() {
+    private void notFoundResponse() {
         log.info(String.format("Status - %s", HTTP_STATUS_404));
         try {
             bufferedWriter.write(HTTP_STATUS_404);
@@ -45,7 +47,7 @@ public class ResponseWriter {
             bufferedWriter.newLine();
             bufferedWriter.write(content);
         } catch (IOException e) {
-            String message = String.format("Exception in badRequest() method caused by %s", e);
+            String message = String.format("Exception in notFoundRequest() method caused by %s", e);
             throw new RuntimeException(message,e);
         }
     }
