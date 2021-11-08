@@ -35,7 +35,7 @@ public class RequestHandler {
             ResourceReader resourceReader = new ResourceReader(request, bufferedWriter);
             ResponseWriter responseWriter = new ResponseWriter(bufferedWriter, resourceReader.getContent(), request);
             responseWriter.response();
-        } catch (IOException cause) {
+        } catch (Exception cause) {
             String message = String.format("Exception in handle() method in Request handle caused by %s", cause);
             throw new ServerException(message, cause, clientSocket);
         } finally {

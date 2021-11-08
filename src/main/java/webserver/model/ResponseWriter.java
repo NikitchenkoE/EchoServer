@@ -26,7 +26,7 @@ public class ResponseWriter {
             bufferedWriter.newLine();
             bufferedWriter.newLine();
             bufferedWriter.write(content);
-        } catch (IOException cause) {
+        } catch (Exception cause) {
             String message = String.format("Exception in badRequest() method caused by %s", cause);
             throw new ServerException(message, cause, bufferedWriter);
         }
