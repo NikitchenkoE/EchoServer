@@ -29,14 +29,15 @@ public class ResponseWriter {
                 bufferedWriter.newLine();
                 bufferedWriter.write(content);
             } else {
-                badRequest();
+                notFoundRequest();
             }
         } catch (IOException e) {
-            throw new RuntimeException(String.format("Exception in response() method caused by %s",e));
+            String message = String.format("Exception in response() method caused by %s", e);
+            throw new RuntimeException(message,e);
         }
     }
 
-    private void badRequest() {
+    private void notFoundRequest() {
         log.info(String.format("Status - %s", HTTP_STATUS_404));
         try {
             bufferedWriter.write(HTTP_STATUS_404);
@@ -44,7 +45,8 @@ public class ResponseWriter {
             bufferedWriter.newLine();
             bufferedWriter.write(content);
         } catch (IOException e) {
-            throw new RuntimeException(String.format("Exception in badRequest() method caused by %s",e));
+            String message = String.format("Exception in badRequest() method caused by %s", e);
+            throw new RuntimeException(message,e);
         }
     }
 }

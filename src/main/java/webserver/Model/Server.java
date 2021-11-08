@@ -39,7 +39,8 @@ public class Server {
                 thread.interrupt();
             }
         } catch (IOException e) {
-            throw new RuntimeException(String.format("Exception in start() method caused by %s",e));
+            String message = String.format("Exception in start() method caused by %s", e);
+            throw new RuntimeException(message,e);
         }
     }
 
