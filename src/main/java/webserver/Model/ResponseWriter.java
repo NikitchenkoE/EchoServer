@@ -1,6 +1,8 @@
 package webserver.Model;
 
 import lombok.extern.log4j.Log4j2;
+import webserver.Entities.Request;
+import webserver.Entities.ResponseStatus;
 import webserver.constans.Constants;
 
 import java.io.BufferedWriter;
@@ -10,24 +12,23 @@ import java.io.IOException;
 public class ResponseWriter {
     private final BufferedWriter bufferedWriter;
     private final String content;
-    private final String responseStatus;
+    private final Request request;
 
-
-    public ResponseWriter(BufferedWriter bufferedWriter, String content, String responseStatus) {
+    public ResponseWriter(BufferedWriter bufferedWriter, String content, Request request) {
         this.bufferedWriter = bufferedWriter;
         this.content = content;
-        this.responseStatus = responseStatus;
+        this.request = request;
     }
 
     public void response() {
-        switch (responseStatus) {
-            case (Constants.HTTP_STATUS_200) -> oKResponse();
-            case (Constants.HTTP_STATUS_404) -> notFoundResponse();
+        switch (request.getResponseStatus()) {
+            case HTTP_STATUS_200 -> oKResponse();
+            case HTTP_STATUS_404 -> notFoundResponse();
         }
     }
 
     private void oKResponse(){
-        log.info(String.format("Status - %s",Constants.HTTP_STATUS_200));
+        log.info(String.format("Status - %s", ResponseStatus.HTTP_STATUS_200));
         try {
             bufferedWriter.write(Constants.HTTP_STATUS_200);
             bufferedWriter.newLine();
@@ -40,7 +41,7 @@ public class ResponseWriter {
     }
 
     private void notFoundResponse() {
-        log.info(String.format("Status - %s",Constants.HTTP_STATUS_404));
+        log.info(String.format("Status - %s",ResponseStatus.HTTP_STATUS_404));
         try {
             bufferedWriter.write(Constants.HTTP_STATUS_404);
             bufferedWriter.newLine();

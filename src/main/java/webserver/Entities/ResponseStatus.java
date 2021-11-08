@@ -1,4 +1,4 @@
-package webserver.Model;
+package webserver.Entities;
 
 public enum ResponseStatus {
     HTTP_STATUS_200,

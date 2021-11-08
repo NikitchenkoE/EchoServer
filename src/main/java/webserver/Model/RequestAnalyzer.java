@@ -3,8 +3,11 @@ package webserver.Model;
 import lombok.extern.log4j.Log4j2;
 import webserver.Entities.HttpMethod;
 import webserver.Entities.Request;
+import webserver.Entities.ResponseStatus;
+import webserver.constans.Constants;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -12,9 +15,15 @@ import java.util.stream.Collectors;
 @Log4j2
 public class RequestAnalyzer {
     private final BufferedReader bufferedReader;
+    private final String webPath;
+    private final String fileName;
+    private final String errorPagePath;
 
-    public RequestAnalyzer(BufferedReader bufferedReader) {
+    public RequestAnalyzer(BufferedReader bufferedReader, String webPath, String fileName, String errorPagePath) {
         this.bufferedReader = bufferedReader;
+        this.webPath = webPath;
+        this.fileName = fileName;
+        this.errorPagePath = errorPagePath;
     }
 
     public Request getRequest() {
@@ -30,16 +39,14 @@ public class RequestAnalyzer {
             String message = String.format("Exception by reading next request: %s, with next info %s", stringsByHttpRequest, e);
             throw new RuntimeException(message, e);
         }
-
         request.setHttpMethod(getHttpMethod(stringsByHttpRequest));
         request.setUri(getUri(stringsByHttpRequest, request));
         request.setHeaders(getHeaders(stringsByHttpRequest));
-
         log.info("Get URI by client - {}", request.getUri());
-        return request;
+        return addPathAndResponseStatusToRequest(request);
     }
 
-    private Enum<HttpMethod> getHttpMethod(List<String> requestLines) {
+    private HttpMethod getHttpMethod(List<String> requestLines) {
         String method = requestLines.stream()
                 .map(s -> Pattern.compile(" ").split(s))
                 .flatMap(Arrays::stream)
@@ -75,6 +82,25 @@ public class RequestAnalyzer {
                 });
 
         return headers;
+    }
+
+    private Request addPathAndResponseStatusToRequest(Request request) {
+        request.setResponsePath(Constants.DEFAULT_ERROR_PAGE);
+        request.setResponseStatus(ResponseStatus.HTTP_STATUS_404);
+        String uri = request.getUri();
+        if (uri.equals(webPath)) {
+
+            if (new File(uri.concat(fileName)).exists()) {
+                request.setResponsePath(uri.concat(fileName));
+                request.setResponseStatus(ResponseStatus.HTTP_STATUS_200);
+            }
+
+        } else if (uri.contains(webPath) && new File(uri).exists()) {
+            request.setResponsePath(uri);
+            request.setResponseStatus(ResponseStatus.HTTP_STATUS_200);
+        }
+        log.info("Path sent to ResourceReader - {}", request.getResponsePath());
+        return request;
     }
 
 }
