@@ -48,7 +48,6 @@ public class RequestAnalyzer {
         request.setHeaders(getHeaders(stringsByHttpRequest));
         addPathAndResponseStatusToRequest(request);
         request.setResponseStatus(getResponseStatus(request));
-        System.out.println(request.toString());
         log.info("Get URI by client - {}", request.getUri());
         return request;
     }
