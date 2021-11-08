@@ -68,8 +68,12 @@ public class Server {
         this.fileName = fileName;
     }
 
-    public void setErrorPagePath(String errorPagePath) {
-        this.errorPagePath = errorPagePath;
+    public void setErrorPageName(String errorPageName) {
+        String errorPagePathByClient = webAppPath.concat(errorPageName);
+        File errorPageFile = new File(errorPagePathByClient);
+        if (errorPageFile.exists()){
+            this.errorPagePath = errorPagePathByClient;
+        }
     }
 }
 
