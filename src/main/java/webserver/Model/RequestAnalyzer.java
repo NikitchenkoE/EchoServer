@@ -4,16 +4,20 @@ import lombok.extern.log4j.Log4j2;
 import webserver.Entities.HttpMethod;
 import webserver.Entities.Request;
 import webserver.Entities.ResponseStatus;
-import webserver.constans.Constants;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Log4j2
 public class RequestAnalyzer {
+    private final Pattern patternDeleteSpaces = Pattern.compile(" ");
+    private final Pattern patternDeleteColonAndOneSpace = Pattern.compile(": ");
     private final BufferedReader bufferedReader;
     private final String webPath;
     private final String fileName;
@@ -42,26 +46,48 @@ public class RequestAnalyzer {
         request.setHttpMethod(getHttpMethod(stringsByHttpRequest));
         request.setUri(getUri(stringsByHttpRequest, request));
         request.setHeaders(getHeaders(stringsByHttpRequest));
+        addPathAndResponseStatusToRequest(request);
+        request.setResponseStatus(getResponseStatus(request));
+        System.out.println(request.toString());
         log.info("Get URI by client - {}", request.getUri());
-        return addPathAndResponseStatusToRequest(request);
+        return request;
+    }
+
+
+    private void addPathAndResponseStatusToRequest(Request request) {
+        request.setResponsePath(errorPagePath);
+        String uri = request.getUri();
+        if (uri.equals(webPath)) {
+            if (new File(uri.concat(fileName)).exists()) {
+                request.setResponsePath(uri.concat(fileName));
+            }
+        } else if (uri.contains(webPath) && new File(uri).exists()) {
+            request.setResponsePath(uri);
+        }
+        log.info("Path sent to ResourceReader - {}", request.getResponsePath());
     }
 
     private HttpMethod getHttpMethod(List<String> requestLines) {
+        HttpMethod httpMethod;
         String method = requestLines.stream()
                 .map(s -> Pattern.compile(" ").split(s))
                 .flatMap(Arrays::stream)
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Null value not supported"));
 
-        return HttpMethod.valueOf(method);
+        try {
+            httpMethod = HttpMethod.valueOf(method);
+        } catch (Exception e) {
+            httpMethod = HttpMethod.NOT_SUPPORTED_METHOD;
+        }
+        return httpMethod;
     }
 
     private String getUri(List<String> requestLines, Request request) {
         String uri = requestLines.stream()
-                .filter(s -> s.contains(request.getHttpMethod().toString()))
-                .collect(Collectors.toList())
+                .findFirst()
                 .stream()
-                .map(s -> Pattern.compile(" ").split(s))
+                .map(patternDeleteSpaces::split)
                 .flatMap(Arrays::stream)
                 .filter(str -> str.contains("/"))
                 .findFirst()
@@ -77,30 +103,26 @@ public class RequestAnalyzer {
                 .filter(s -> s.contains(":"))
                 .collect(Collectors.toList())
                 .forEach(s -> {
-                    String[] partsOfHeader = Pattern.compile(": ").split(s);
+                    String[] partsOfHeader = patternDeleteColonAndOneSpace.split(s);
                     headers.put(partsOfHeader[0], partsOfHeader[1]);
                 });
 
         return headers;
     }
 
-    private Request addPathAndResponseStatusToRequest(Request request) {
-        request.setResponsePath(Constants.DEFAULT_ERROR_PAGE);
-        request.setResponseStatus(ResponseStatus.HTTP_STATUS_404);
+    private ResponseStatus getResponseStatus(Request request) {
         String uri = request.getUri();
-        if (uri.equals(webPath)) {
+        if (!uri.contains(webPath)) {
+            return ResponseStatus.HTTP_STATUS_400;
+        } else if (uri.equals("")) {
+            return ResponseStatus.HTTP_STATUS_400;
+        } else if (request.getHttpMethod().equals(HttpMethod.NOT_SUPPORTED_METHOD)) {
+            return ResponseStatus.HTTP_STATUS_405;
+        } else if (!(new File(uri).exists()) && !(new File(uri.concat(fileName)).exists())) {
+            return ResponseStatus.HTTP_STATUS_404;
 
-            if (new File(uri.concat(fileName)).exists()) {
-                request.setResponsePath(uri.concat(fileName));
-                request.setResponseStatus(ResponseStatus.HTTP_STATUS_200);
-            }
-
-        } else if (uri.contains(webPath) && new File(uri).exists()) {
-            request.setResponsePath(uri);
-            request.setResponseStatus(ResponseStatus.HTTP_STATUS_200);
-        }
-        log.info("Path sent to ResourceReader - {}", request.getResponsePath());
-        return request;
+        } else return ResponseStatus.HTTP_STATUS_200;
     }
-
 }
+
+

@@ -29,13 +29,13 @@ public class RequestHandler {
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
              BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))) {
 
-            RequestAnalyzer requestAnalyzer = new RequestAnalyzer(bufferedReader,webAppPath, fileName, errorPagePath);
+            RequestAnalyzer requestAnalyzer = new RequestAnalyzer(bufferedReader, webAppPath, fileName, errorPagePath);
             request = requestAnalyzer.getRequest();
             ResourceReader resourceReader = new ResourceReader(request);
             ResponseWriter responseWriter = new ResponseWriter(bufferedWriter, resourceReader.getContent(), request);
             responseWriter.response();
         } catch (IOException e) {
-            throw new RuntimeException(String.format("Exception in handle() method in Request handle caused by %s",e));
+            throw new RuntimeException(String.format("Exception in handle() method in Request handle caused by %s", e));
         }
     }
 }

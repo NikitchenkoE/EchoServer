@@ -5,7 +5,8 @@ import lombok.extern.log4j.Log4j2;
 import webserver.Handler.RequestHandler;
 import webserver.constans.Constants;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -39,7 +40,7 @@ public class Server {
             }
         } catch (IOException e) {
             String message = String.format("Exception in start() method caused by %s", e);
-            throw new RuntimeException(message,e);
+            throw new RuntimeException(message, e);
         }
     }
 
@@ -70,7 +71,7 @@ public class Server {
     public void setErrorPageName(String errorPageName) {
         String errorPagePathByClient = webAppPath.concat(errorPageName);
         File errorPageFile = new File(errorPagePathByClient);
-        if (errorPageFile.exists()){
+        if (errorPageFile.exists()) {
             this.errorPagePath = errorPagePathByClient;
         }
     }
