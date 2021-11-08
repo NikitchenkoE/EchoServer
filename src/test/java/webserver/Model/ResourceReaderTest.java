@@ -13,101 +13,101 @@ public class ResourceReaderTest {
     String errorPagePath = "src/test/java/webserver/testFiles/testErrorFile.txt";
 
     @Test
-    public void getContentByWebPathAbdFileName(){
+    public void getContentByWebPathAbdFileName() {
         Request request = new Request();
         request.setUri(webPath);
-        ResourceReader resourceReader = new ResourceReader(request,webPath,fileName,errorPagePath);
+        ResourceReader resourceReader = new ResourceReader(request, webPath, fileName, errorPagePath);
         String expected = "This is test bro";
         String actual = resourceReader.getContent();
-        assertEquals(expected,actual);
+        assertEquals(expected, actual);
     }
 
     @Test
-    public void getContentByFilePath(){
+    public void getContentByFilePath() {
         Request request = new Request();
         request.setUri(pathToFile);
-        ResourceReader resourceReader = new ResourceReader(request,webPath,fileName,errorPagePath);
+        ResourceReader resourceReader = new ResourceReader(request, webPath, fileName, errorPagePath);
         String expected = "This is test bro";
         String actual = resourceReader.getContent();
-        assertEquals(expected,actual);
+        assertEquals(expected, actual);
     }
 
     @Test
-    public void getContentByProblemPath(){
+    public void getContentByProblemPath() {
         Request request = new Request();
         request.setUri("someProblemPath");
-        ResourceReader resourceReader = new ResourceReader(request,webPath,fileName,errorPagePath);
+        ResourceReader resourceReader = new ResourceReader(request, webPath, fileName, errorPagePath);
         String expected = "This is bad file bro";
         String actual = resourceReader.getContent();
-        assertEquals(expected,actual);
+        assertEquals(expected, actual);
     }
 
     @Test
-    public void getContentByPathThatDifferentWithWebPath(){
+    public void getContentByPathThatDifferentWithWebPath() {
         Request request = new Request();
         request.setUri("src/test/java/webserver/testFiles/testFile.txt");
         String webPathDifferent = "src/main/resources/webapp/";
-        ResourceReader resourceReader = new ResourceReader(request,webPathDifferent,fileName,errorPagePath);
+        ResourceReader resourceReader = new ResourceReader(request, webPathDifferent, fileName, errorPagePath);
         String expected = "This is bad file bro";
         String actual = resourceReader.getContent();
-        assertEquals(expected,actual);
+        assertEquals(expected, actual);
     }
 
     @Test
-    public void getContentByRightPathButDifferentName(){
+    public void getContentByRightPathButDifferentName() {
         Request request = new Request();
         request.setUri(webPath);
         String differentName = "notThatFile.txt";
-        ResourceReader resourceReader = new ResourceReader(request,webPath,differentName,errorPagePath);
+        ResourceReader resourceReader = new ResourceReader(request, webPath, differentName, errorPagePath);
         String expected = "This is bad file bro";
         String actual = resourceReader.getContent();
-        assertEquals(expected,actual);
+        assertEquals(expected, actual);
     }
 
 
     @Test
-    public void getStatusByWebPathAbdFileName(){
+    public void getStatusByWebPathAbdFileName() {
         Request request = new Request();
         request.setUri(webPath);
-        ResourceReader resourceReader = new ResourceReader(request,webPath,fileName,errorPagePath);
+        ResourceReader resourceReader = new ResourceReader(request, webPath, fileName, errorPagePath);
         resourceReader.getContent();
         assertTrue(resourceReader.getStatus());
     }
 
     @Test
-    public void getStatusByFilePath(){
+    public void getStatusByFilePath() {
         Request request = new Request();
         request.setUri(pathToFile);
-        ResourceReader resourceReader = new ResourceReader(request,webPath,fileName,errorPagePath);
+        ResourceReader resourceReader = new ResourceReader(request, webPath, fileName, errorPagePath);
         resourceReader.getContent();
         assertTrue(resourceReader.getStatus());
     }
 
     @Test
-    public void getStatusByProblemPath(){
+    public void getStatusByProblemPath() {
         Request request = new Request();
         request.setUri("someProblemPath");
-        ResourceReader resourceReader = new ResourceReader(request,webPath,fileName,errorPagePath);
+        ResourceReader resourceReader = new ResourceReader(request, webPath, fileName, errorPagePath);
         resourceReader.getContent();
         assertFalse(resourceReader.getStatus());
     }
 
     @Test
-    public void getStatusByPathThatDifferentWithWebPath(){
+    public void getStatusByPathThatDifferentWithWebPath() {
         Request request = new Request();
         request.setUri("src/test/java/webserver/testFiles/testFile.txt");
         String webPathDifferent = "src/main/resources/webapp/";
-        ResourceReader resourceReader = new ResourceReader(request,webPathDifferent,fileName,errorPagePath);
+        ResourceReader resourceReader = new ResourceReader(request, webPathDifferent, fileName, errorPagePath);
         resourceReader.getContent();
         assertFalse(resourceReader.getStatus());
     }
 
     @Test
-    public void getStatustByRightPathButDifferentName(){
+    public void getStatustByRightPathButDifferentName() {
         Request request = new Request();
         request.setUri(webPath);
         String differentName = "notThatFile.txt";
-        ResourceReader resourceReader = new ResourceReader(request,webPath,differentName,errorPagePath);
+        ResourceReader resourceReader = new ResourceReader(request, webPath, differentName, errorPagePath);
         resourceReader.getContent();
         assertFalse(resourceReader.getStatus());
     }
