@@ -35,7 +35,7 @@ public class RequestAnalyzer {
         request.setUri(getUri(stringsByHttpRequest, request));
         request.setHeaders(getHeaders(stringsByHttpRequest));
 
-        log.info(String.format("Get URI by client - %s", request.getUri()));
+        log.info("Get URI by client - {}", request.getUri());
         return request;
     }
 
