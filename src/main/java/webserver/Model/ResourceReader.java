@@ -2,6 +2,7 @@ package webserver.Model;
 
 import lombok.extern.log4j.Log4j2;
 import webserver.Entities.Request;
+import webserver.constans.Constants;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -45,19 +46,19 @@ public class ResourceReader {
 
     private String getPath() {
         String pathToFile = errorPagePath;
-        responseStatus = "HTTP/1.1 404 Not Found";
+        responseStatus = Constants.HTTP_STATUS_404;
 
         String uri = request.getUri();
         if (uri.equals(webPath)) {
 
             if (new File(uri.concat(fileName)).exists()) {
                 pathToFile = uri.concat(fileName);
-                responseStatus = "HTTP/1.1 200 OK";
+                responseStatus = Constants.HTTP_STATUS_200;
             }
 
         } else if (uri.contains(webPath) && new File(uri).exists()) {
             pathToFile = uri;
-            responseStatus = "HTTP/1.1 200 OK";
+            responseStatus = Constants.HTTP_STATUS_200;
         }
         log.info("Path sent to ResourceReader - {}", pathToFile);
         return pathToFile;
