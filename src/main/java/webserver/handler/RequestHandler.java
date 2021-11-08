@@ -15,7 +15,6 @@ public class RequestHandler {
     private final String webAppPath;
     private final String errorPagePath;
     private final Socket clientSocket;
-    private Request request;
 
     public RequestHandler(String fileName, String resourcesPath, Socket clientSocket, String errorPageName) {
         this.clientSocket = clientSocket;
@@ -30,7 +29,7 @@ public class RequestHandler {
              BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))) {
 
             RequestAnalyzer requestAnalyzer = new RequestAnalyzer(bufferedReader, webAppPath, fileName, errorPagePath);
-            request = requestAnalyzer.getRequest();
+            Request request = requestAnalyzer.getRequest();
             ResourceReader resourceReader = new ResourceReader(request);
             ResponseWriter responseWriter = new ResponseWriter(bufferedWriter, resourceReader.getContent(), request);
             responseWriter.response();
