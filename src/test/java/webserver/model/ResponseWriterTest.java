@@ -15,7 +15,6 @@ public class ResponseWriterTest {
 
     String webPath = "src/test/java/webserver/model";
     String pathToCorrectFile = "src/test/java/webserver/testFiles/testFile.txt";
-    String pathToWrongFile = "src/test/java/webserver/testFiles/testErrorFile.txt";
     Request correctRequest = new Request(webPath, null, HttpMethod.GET, ResponseStatus.HTTP_STATUS_200, pathToCorrectFile);
     String content = "content content content content content content content";
 
