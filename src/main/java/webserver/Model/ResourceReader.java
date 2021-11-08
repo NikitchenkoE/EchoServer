@@ -25,7 +25,7 @@ public class ResourceReader {
     }
 
     public String getContent() {
-        log.info(String.format("Read file by path - %s", getPath()));
+        log.info("Read file by path - {}", getPath());
         String content;
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(getPath()))) {
             String s;
@@ -35,8 +35,9 @@ public class ResourceReader {
             }
             content = stringJoiner.toString();
         } catch (IOException e) {
-            log.error(String.format("Cannot find file with %s path", getPath()));
-            throw new RuntimeException(String.format("Exception in getContent() in ResourceReader.class caused by %s", e));
+            log.error("Cannot find file with {} path", getPath());
+            String message = String.format("Exception in getContent() in ResourceReader.class caused by %s", e);
+            throw new RuntimeException(message,e);
         }
         return content;
     }
@@ -56,7 +57,7 @@ public class ResourceReader {
             pathToFile = uri;
             status = true;
         }
-        log.info(String.format("Path sent to ResourceReader - %s", pathToFile));
+        log.info("Path sent to ResourceReader - {}", pathToFile);
         return pathToFile;
     }
 
