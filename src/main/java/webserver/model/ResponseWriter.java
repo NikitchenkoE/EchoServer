@@ -5,7 +5,6 @@ import webserver.entities.Request;
 import webserver.exceptions.ServerException;
 
 import java.io.BufferedWriter;
-import java.io.IOException;
 
 @Log4j2
 public class ResponseWriter {
@@ -23,8 +22,8 @@ public class ResponseWriter {
         log.info("Status - {}", request.getResponseStatus());
         try {
             bufferedWriter.write(request.getResponseStatus().getResponse());
-            bufferedWriter.newLine();
-            bufferedWriter.newLine();
+            bufferedWriter.write("\r\n");
+            bufferedWriter.write("\r\n");
             bufferedWriter.write(content);
         } catch (Exception cause) {
             String message = String.format("Exception in badRequest() method caused by %s", cause);
