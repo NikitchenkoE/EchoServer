@@ -59,12 +59,14 @@ public class RequestAnalyzer {
     private void addPathAndResponseStatusToRequest(Request request) {
         request.setResponsePath(errorPagePath);
         String uri = request.getUri();
-        if (uri.equals(webPath)) {
-            if (new File(uri.concat(fileName)).exists()) {
-                request.setResponsePath(uri.concat(fileName));
+        if (!request.getHttpMethod().equals(HttpMethod.NOT_SUPPORTED_METHOD)) {
+            if (uri.equals(webPath)) {
+                if (new File(uri.concat(fileName)).exists()) {
+                    request.setResponsePath(uri.concat(fileName));
+                }
+            } else if (uri.contains(webPath) && new File(uri).exists()) {
+                request.setResponsePath(uri);
             }
-        } else if (uri.contains(webPath) && new File(uri).exists()) {
-            request.setResponsePath(uri);
         }
         log.info("Path sent to ResourceReader - {}", request.getResponsePath());
     }

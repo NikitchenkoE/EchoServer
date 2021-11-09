@@ -144,12 +144,32 @@ public class RequestAnalyzerTest {
     }
 
     @Test
+    public void testGetRequestResponse400ExceptionPath() {
+        BufferedReader bufferedReader = new BufferedReader(new StringReader(badLinkRequest));
+        requestAnalyzer = new RequestAnalyzer(bufferedReader, webPath, fileName, errorPagePath, new BufferedWriter(new StringWriter()));
+        Request request = requestAnalyzer.getRequest();
+        String expected = errorPagePath;
+        String actual = request.getResponsePath();
+        assertEquals(expected, actual);
+    }
+
+    @Test
     public void testGetRequestResponse400ByEmptyURL() {
         BufferedReader bufferedReader = new BufferedReader(new StringReader(emptyLinkRequest));
         requestAnalyzer = new RequestAnalyzer(bufferedReader, webPath, fileName, errorPagePath, new BufferedWriter(new StringWriter()));
         Request request = requestAnalyzer.getRequest();
         ResponseStatus expected = ResponseStatus.HTTP_STATUS_400;
         ResponseStatus actual = request.getResponseStatus();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testGetRequestResponse400ByEmptyURLExceptionPath() {
+        BufferedReader bufferedReader = new BufferedReader(new StringReader(emptyLinkRequest));
+        requestAnalyzer = new RequestAnalyzer(bufferedReader, webPath, fileName, errorPagePath, new BufferedWriter(new StringWriter()));
+        Request request = requestAnalyzer.getRequest();
+        String expected = errorPagePath;
+        String actual = request.getResponsePath();
         assertEquals(expected, actual);
     }
 
@@ -164,12 +184,33 @@ public class RequestAnalyzerTest {
     }
 
     @Test
+    public void testGetRequestResponse404ExceptionPage() {
+        BufferedReader bufferedReader = new BufferedReader(new StringReader(getRequestWithWrongFail));
+        requestAnalyzer = new RequestAnalyzer(bufferedReader, webPath, fileName, errorPagePath, new BufferedWriter(new StringWriter()));
+        Request request = requestAnalyzer.getRequest();
+        String expected = errorPagePath;
+        String actual = request.getResponsePath();
+        assertEquals(expected, actual);
+    }
+
+
+    @Test
     public void testGetRequestResponse405() {
         BufferedReader bufferedReader = new BufferedReader(new StringReader(getRequestWithWrongMethod));
         requestAnalyzer = new RequestAnalyzer(bufferedReader, webPath, fileName, errorPagePath, new BufferedWriter(new StringWriter()));
         Request request = requestAnalyzer.getRequest();
         ResponseStatus expected = ResponseStatus.HTTP_STATUS_405;
         ResponseStatus actual = request.getResponseStatus();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testGetRequestResponse405PathToExceptionPage() {
+        BufferedReader bufferedReader = new BufferedReader(new StringReader(getRequestWithWrongMethod));
+        requestAnalyzer = new RequestAnalyzer(bufferedReader, webPath, fileName, errorPagePath, new BufferedWriter(new StringWriter()));
+        Request request = requestAnalyzer.getRequest();
+        String expected = errorPagePath;
+        String actual = request.getResponsePath();
         assertEquals(expected, actual);
     }
 
