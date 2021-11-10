@@ -12,13 +12,10 @@ public class ChatServer {
             ArrayList<ChatThread> chatThreadArrayList = new ArrayList<>();
             while (true) {
                 Socket clientSocket = serverSocket.accept();
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
-                ChatThread chatThread = new ChatThread(chatThreadArrayList,bufferedWriter,bufferedReader);
+                ChatThread chatThread = new ChatThread(chatThreadArrayList, clientSocket);
                 chatThreadArrayList.add(chatThread);
                 chatThread.start();
             }
         }
     }
-
 }
