@@ -30,7 +30,7 @@ public class ChatThread extends Thread {
         } catch (IOException e) {
             log.info("User exit chat");
         } finally {
-            closeWriterAndReader();
+            closeWriterAndReader(bufferedWriter, bufferedReader);
         }
     }
 
@@ -41,11 +41,10 @@ public class ChatThread extends Thread {
         }
     }
 
-    private void closeWriterAndReader() {
-        try {
-            bufferedWriter.close();
-            bufferedReader.close();
-            clientSocket.close();
+    private void closeWriterAndReader(BufferedWriter bufferedWriter, BufferedReader bufferedReader) {
+        try (clientSocket;
+             bufferedReader;
+             bufferedWriter) {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

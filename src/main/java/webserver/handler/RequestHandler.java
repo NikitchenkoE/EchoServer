@@ -38,12 +38,6 @@ public class RequestHandler {
         } catch (Exception cause) {
             String message = String.format("Exception in handle() method in Request handle caused by %s", cause);
             throw new ServerException(message, cause, clientSocket);
-        } finally {
-            try {
-                clientSocket.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
         }
     }
 }
