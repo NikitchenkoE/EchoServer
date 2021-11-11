@@ -18,7 +18,7 @@ public class ClientThread extends Thread {
     @Override
     public void run() {
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-            while (true) {
+            while (socket.isConnected()) {
                 String textFromServer = bufferedReader.readLine();
                 System.out.println(textFromServer);
             }

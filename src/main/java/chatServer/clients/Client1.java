@@ -11,6 +11,7 @@ public class Client1 {
     }
 
     public static void main(String[] args) {
+        boolean connected = true;
         Client1 client2 = new Client1("Client1");
         try (Socket socket = new Socket("localhost", 8080);
              BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
@@ -20,9 +21,14 @@ public class Client1 {
             clientThread.start();
 
             String stringByConsole;
-            while (!(stringByConsole = bufferedConsoleReader.readLine()).isEmpty()) {
-                bufferedWriter.write(client2.name.concat(": " + stringByConsole + "\n"));
+            while (connected) {
+                stringByConsole = bufferedConsoleReader.readLine();
+                bufferedWriter.write(client2.name + ": " + stringByConsole);
+                bufferedWriter.newLine();
                 bufferedWriter.flush();
+                if (stringByConsole.equals("Disconnect")) {
+                    connected = false;
+                }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
