@@ -13,11 +13,11 @@ public class ChatServer {
     public static void main(String[] args) throws IOException {
         try (ServerSocket serverSocket = new ServerSocket(8080)) {
             log.info("Server started");
-            ArrayList<ClientSocket> clientSockets = new ArrayList<>();
+            ArrayList<ClientInfo> clientSockets = new ArrayList<>();
             while (true) {
                 Socket socket = serverSocket.accept();
                 log.info("Client connected");
-                ClientSocket clientSocket = new ClientSocket(socket);
+                ClientInfo clientSocket = new ClientInfo(socket);
                 clientSockets.add(clientSocket);
                 Handler handler = new Handler(clientSockets);
                 handler.start();

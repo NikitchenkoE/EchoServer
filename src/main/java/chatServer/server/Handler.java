@@ -5,21 +5,23 @@ import lombok.extern.log4j.Log4j2;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.net.Socket;
 import java.util.ArrayList;
+import java.util.StringJoiner;
 
 @Log4j2
 public class Handler extends Thread {
-    private final ArrayList<ClientSocket> clientSockets;
+    private final ArrayList<ClientInfo> clients;
 
-    public Handler(ArrayList<ClientSocket> clientSockets) {
-        this.clientSockets = clientSockets;
+    public Handler(ArrayList<ClientInfo> clientSockets) {
+        this.clients = clientSockets;
     }
 
     @Override
     public void run() {
         try {
             while (true) {
-                while (!clientSockets.isEmpty()) {
+                while (!clients.isEmpty()) {
                     String message = readMessage();
                     if (!message.isEmpty()) {
                         sendMessage(message);
@@ -27,30 +29,32 @@ public class Handler extends Thread {
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Client Disconnected",e);
         }
     }
 
 
     private String readMessage() throws IOException {
-        String s = "";
-        for (ClientSocket clientSocket : clientSockets) {
-            BufferedReader bufferedReader = clientSocket.getBufferedReader();
+        StringJoiner stringJoiner = new StringJoiner("\n");
+        for (int i = 0; i < clients.size(); i++) {
+            Socket clientSocket = clients.get(i).getClientSocket();
+            BufferedReader bufferedReader = clients.get(i).getBufferedReader();
             synchronized (bufferedReader) {
                 if (bufferedReader.ready()) {
-                    s = bufferedReader.readLine();
-                    if (s.contains("Disconnect")) {
-                        log.info("Socket {} disconnected", clientSocket.getClientSocket());
-                        disconnect(clientSocket);
+                    String message =  bufferedReader.readLine();
+                    stringJoiner.add(message);
+                    if (message.contains("Disconnect")) {
+                        log.info("Socket {} disconnected", clientSocket);
+                        disconnect(clients.get(i));
                     }
                 }
             }
         }
-        return s;
+        return stringJoiner.toString();
     }
 
     private void sendMessage(String message) throws IOException {
-        for (ClientSocket clientSocket : clientSockets) {
+        for (ClientInfo clientSocket : clients) {
             BufferedWriter bufferedWriter = clientSocket.getBufferedWriter();
             bufferedWriter.write(message);
             bufferedWriter.newLine();
@@ -58,7 +62,7 @@ public class Handler extends Thread {
         }
     }
 
-    private void disconnect(ClientSocket clientSocket) {
+    private void disconnect(ClientInfo clientSocket) {
         try {
             clientSocket.getBufferedWriter().close();
         } catch (IOException e) {
@@ -74,6 +78,6 @@ public class Handler extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        clientSockets.remove(clientSocket);
+        clients.remove(clientSocket);
     }
 }

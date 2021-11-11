@@ -6,12 +6,12 @@ import java.io.*;
 import java.net.Socket;
 
 @Data
-public class ClientSocket {
+public class ClientInfo {
     private final Socket clientSocket;
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
 
-    public ClientSocket(Socket clientSocket) {
+    public ClientInfo(Socket clientSocket) {
         this.clientSocket = clientSocket;
         setBufferReaderAndBufferWriter();
     }
