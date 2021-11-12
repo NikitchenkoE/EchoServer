@@ -11,17 +11,21 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class ChatServer {
 
     public static void main(String[] args) throws IOException {
+        CopyOnWriteArrayList<ClientHandler> clientHandlers = new CopyOnWriteArrayList<>();
         try (ServerSocket serverSocket = new ServerSocket(8080)) {
             log.info("Server started");
-            CopyOnWriteArrayList<ClientHandler> clientHandlers = new CopyOnWriteArrayList<>();
+            clientHandlers = new CopyOnWriteArrayList<>();
+            Handler handler = new Handler(clientHandlers);
             while (true) {
                 Socket socket = serverSocket.accept();
                 log.info("Client connected");
                 ClientHandler clientHandler = new ClientHandler(socket);
                 clientHandlers.add(clientHandler);
-                Handler handler = new Handler(clientHandlers);
-                handler.start();
+                Thread thread = new Thread(handler);
+                thread.start();
             }
+        }finally {
+           clientHandlers.forEach(ClientHandler::disconnectClient);
         }
     }
 }

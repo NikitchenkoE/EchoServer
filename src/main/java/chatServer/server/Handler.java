@@ -10,7 +10,7 @@ import java.util.StringJoiner;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Log4j2
-public class Handler extends Thread {
+public class Handler implements Runnable {
     private final CopyOnWriteArrayList<ClientHandler> clientOnServer;
 
     public Handler(CopyOnWriteArrayList<ClientHandler> clients) {
@@ -19,16 +19,12 @@ public class Handler extends Thread {
 
     @Override
     public void run() {
-        try {
             while (!clientOnServer.isEmpty()) {
                 String message = readMessage();
                 if (!message.isEmpty()) {
                     sendMessage(message);
                 }
             }
-        } finally {
-            disconnectAll();
-        }
     }
 
 
@@ -50,7 +46,7 @@ public class Handler extends Thread {
                         }
                     }
                 } catch (IOException e) {
-                    log.info("Client {} disconnected", client);
+                    log.error("Client {} disconnected", client);
                     throw new RuntimeException(e);
                 }
             }
@@ -77,10 +73,4 @@ public class Handler extends Thread {
         client.disconnectClient();
         clientOnServer.remove(client);
     }
-
-    private void disconnectAll() {
-        clientOnServer.forEach(client -> disconnect(client, client.getClientSocket()));
-    }
-
-
 }
