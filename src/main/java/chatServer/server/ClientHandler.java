@@ -17,10 +17,22 @@ public class ClientHandler {
         this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
     }
 
-    public void disconnectClient() {
+    public synchronized void disconnectClient() {
         try (clientSocket; bufferedReader; bufferedWriter) {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public synchronized Socket getClientSocket() {
+        return clientSocket;
+    }
+
+    public synchronized BufferedReader getBufferedReader() {
+        return bufferedReader;
+    }
+
+    public synchronized BufferedWriter getBufferedWriter() {
+        return bufferedWriter;
     }
 }

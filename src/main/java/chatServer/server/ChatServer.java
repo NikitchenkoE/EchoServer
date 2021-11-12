@@ -13,13 +13,13 @@ public class ChatServer {
     public static void main(String[] args) throws IOException {
         try (ServerSocket serverSocket = new ServerSocket(8080)) {
             log.info("Server started");
-            CopyOnWriteArrayList<ClientHandler> clientHandlersList = new CopyOnWriteArrayList<>();
+            CopyOnWriteArrayList<ClientHandler> clientHandlers = new CopyOnWriteArrayList<>();
             while (true) {
                 Socket socket = serverSocket.accept();
                 log.info("Client connected");
                 ClientHandler clientHandler = new ClientHandler(socket);
-                clientHandlersList.add(clientHandler);
-                Handler handler = new Handler(clientHandlersList);
+                clientHandlers.add(clientHandler);
+                Handler handler = new Handler(clientHandlers);
                 handler.start();
             }
         }
