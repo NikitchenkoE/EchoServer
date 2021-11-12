@@ -6,78 +6,81 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.StringJoiner;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Log4j2
 public class Handler extends Thread {
-    private final ArrayList<ClientInfo> clients;
+    private final CopyOnWriteArrayList<ClientHandler> clientOnServer;
 
-    public Handler(ArrayList<ClientInfo> clientSockets) {
-        this.clients = clientSockets;
+    public Handler(CopyOnWriteArrayList<ClientHandler> clients) {
+        this.clientOnServer = clients;
     }
 
     @Override
     public void run() {
         try {
-            while (true) {
-                while (!clients.isEmpty()) {
-                    String message = readMessage();
-                    if (!message.isEmpty()) {
-                        sendMessage(message);
-                    }
+            while (!clientOnServer.isEmpty()) {
+                String message = readMessage();
+                if (!message.isEmpty()) {
+                    sendMessage(message);
                 }
             }
-        } catch (IOException e) {
-            throw new RuntimeException("Client Disconnected",e);
+        } finally {
+            disconnectAll();
         }
     }
 
 
-    private String readMessage() throws IOException {
-        StringJoiner stringJoiner = new StringJoiner("\n");
-        for (int i = 0; i < clients.size(); i++) {
-            Socket clientSocket = clients.get(i).getClientSocket();
-            BufferedReader bufferedReader = clients.get(i).getBufferedReader();
+    private String readMessage() {
+        StringJoiner stringJoiner = new StringJoiner("\n\r");
+        for (ClientHandler client : clientOnServer) {
+            Socket clientSocket = client.getClientSocket();
+            BufferedReader bufferedReader = client.getBufferedReader();
             synchronized (bufferedReader) {
-                if (bufferedReader.ready()) {
-                    String message =  bufferedReader.readLine();
-                    stringJoiner.add(message);
-                    if (message.contains("Disconnect")) {
-                        log.info("Socket {} disconnected", clientSocket);
-                        disconnect(clients.get(i));
+                try {
+                    String message;
+                    if (bufferedReader.ready()) {
+                        while (!(message = bufferedReader.readLine()).isEmpty()) {
+                            stringJoiner.add(message);
+                            if (message.contains("Disconnect")) {
+                                disconnect(client, clientSocket);
+                                break;
+                            }
+                        }
                     }
+                } catch (IOException e) {
+                    log.info("Client {} disconnected", client);
+                    throw new RuntimeException(e);
                 }
             }
+
         }
         return stringJoiner.toString();
     }
 
-    private void sendMessage(String message) throws IOException {
-        for (ClientInfo clientSocket : clients) {
-            BufferedWriter bufferedWriter = clientSocket.getBufferedWriter();
-            bufferedWriter.write(message);
-            bufferedWriter.newLine();
-            bufferedWriter.flush();
+    private void sendMessage(String message) {
+        for (ClientHandler clientSocket : clientOnServer) {
+            try {
+                BufferedWriter bufferedWriter = clientSocket.getBufferedWriter();
+                bufferedWriter.write(message);
+                bufferedWriter.write("\n\r");
+                bufferedWriter.flush();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
-    private void disconnect(ClientInfo clientSocket) {
-        try {
-            clientSocket.getBufferedWriter().close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            clientSocket.getBufferedReader().close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            clientSocket.getClientSocket().close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        clients.remove(clientSocket);
+    private void disconnect(ClientHandler client, Socket clientSocket) {
+        log.info("Socket {} disconnected", clientSocket);
+        client.disconnectClient();
+        clientOnServer.remove(client);
     }
+
+    private void disconnectAll() {
+        clientOnServer.forEach(client -> disconnect(client, client.getClientSocket()));
+    }
+
+
 }

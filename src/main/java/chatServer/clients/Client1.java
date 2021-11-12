@@ -24,7 +24,7 @@ public class Client1 {
             while (connected) {
                 stringByConsole = bufferedConsoleReader.readLine();
                 bufferedWriter.write(client2.name + ": " + stringByConsole);
-                bufferedWriter.newLine();
+                bufferedWriter.write("\n\r");
                 bufferedWriter.flush();
                 if (stringByConsole.equals("Disconnect")) {
                     connected = false;
