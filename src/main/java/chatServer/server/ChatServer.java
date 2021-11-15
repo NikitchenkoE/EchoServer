@@ -14,15 +14,15 @@ public class ChatServer {
         CopyOnWriteArrayList<ClientHandler> clientHandlers = new CopyOnWriteArrayList<>();
         try (ServerSocket serverSocket = new ServerSocket(8080)) {
             log.info("Server started");
-            clientHandlers = new CopyOnWriteArrayList<>();
             Handler handler = new Handler(clientHandlers);
+            Thread thread = new Thread(handler);
+            thread.start();
+
             while (true) {
                 Socket socket = serverSocket.accept();
                 log.info("Client connected");
                 ClientHandler clientHandler = new ClientHandler(socket);
                 clientHandlers.add(clientHandler);
-                Thread thread = new Thread(handler);
-                thread.start();
             }
         }finally {
            clientHandlers.forEach(ClientHandler::disconnectClient);

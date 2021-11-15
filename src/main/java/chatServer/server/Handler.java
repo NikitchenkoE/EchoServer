@@ -19,12 +19,12 @@ public class Handler implements Runnable {
 
     @Override
     public void run() {
-            while (!clientOnServer.isEmpty()) {
-                String message = readMessage();
-                if (!message.isEmpty()) {
-                    sendMessage(message);
-                }
+        while (true) {
+            String message = readMessage();
+            if (!message.isEmpty()) {
+                sendMessage(message);
             }
+        }
     }
 
 
@@ -33,25 +33,24 @@ public class Handler implements Runnable {
         for (ClientHandler client : clientOnServer) {
             Socket clientSocket = client.getClientSocket();
             BufferedReader bufferedReader = client.getBufferedReader();
-            synchronized (bufferedReader) {
-                try {
-                    String message;
-                    if (bufferedReader.ready()) {
-                        while (!(message = bufferedReader.readLine()).isEmpty()) {
-                            stringJoiner.add(message);
-                            if (message.contains("Disconnect")) {
-                                disconnect(client, clientSocket);
-                                break;
-                            }
+            try {
+                String message;
+                if (bufferedReader.ready()) {
+                    while (!(message = bufferedReader.readLine()).isEmpty()) {
+                        stringJoiner.add(message);
+                        if (message.contains("Disconnect")) {
+                            disconnect(client, clientSocket);
+                            break;
                         }
                     }
-                } catch (IOException e) {
-                    log.error("Client {} disconnected", client);
-                    throw new RuntimeException(e);
                 }
+            } catch (IOException e) {
+                log.error("Client {} disconnected", client);
+                throw new RuntimeException(e);
             }
-
         }
+
+
         return stringJoiner.toString();
     }
 
