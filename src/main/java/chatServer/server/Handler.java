@@ -11,10 +11,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 @Log4j2
 public class Handler implements Runnable {
-    private final CopyOnWriteArrayList<ClientHandler> clientOnServer;
+    private final CopyOnWriteArrayList<HandledClient> clientsOnServer;
 
-    public Handler(CopyOnWriteArrayList<ClientHandler> clients) {
-        this.clientOnServer = clients;
+    public Handler(CopyOnWriteArrayList<HandledClient> clients) {
+        this.clientsOnServer = clients;
     }
 
     @Override
@@ -27,10 +27,9 @@ public class Handler implements Runnable {
         }
     }
 
-
     private String readMessage() {
         StringJoiner stringJoiner = new StringJoiner("\n\r");
-        for (ClientHandler client : clientOnServer) {
+        for (HandledClient client : clientsOnServer) {
             Socket clientSocket = client.getClientSocket();
             BufferedReader bufferedReader = client.getBufferedReader();
             try {
@@ -49,13 +48,11 @@ public class Handler implements Runnable {
                 throw new RuntimeException(e);
             }
         }
-
-
         return stringJoiner.toString();
     }
 
     private void sendMessage(String message) {
-        for (ClientHandler clientSocket : clientOnServer) {
+        for (HandledClient clientSocket : clientsOnServer) {
             try {
                 BufferedWriter bufferedWriter = clientSocket.getBufferedWriter();
                 bufferedWriter.write(message);
@@ -67,9 +64,9 @@ public class Handler implements Runnable {
         }
     }
 
-    private void disconnect(ClientHandler client, Socket clientSocket) {
+    private void disconnect(HandledClient client, Socket clientSocket) {
         log.info("Socket {} disconnected", clientSocket);
         client.disconnectClient();
-        clientOnServer.remove(client);
+        clientsOnServer.remove(client);
     }
 }

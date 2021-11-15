@@ -6,12 +6,12 @@ import java.io.*;
 import java.net.Socket;
 
 @Data
-public class ClientHandler {
+public class HandledClient {
     private final Socket clientSocket;
     private final BufferedReader bufferedReader;
     private final BufferedWriter bufferedWriter;
 
-    public ClientHandler(Socket clientSocket) throws IOException {
+    public HandledClient(Socket clientSocket) throws IOException {
         this.clientSocket = clientSocket;
         this.bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
@@ -22,17 +22,5 @@ public class ClientHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public synchronized Socket getClientSocket() {
-        return clientSocket;
-    }
-
-    public synchronized BufferedReader getBufferedReader() {
-        return bufferedReader;
-    }
-
-    public synchronized BufferedWriter getBufferedWriter() {
-        return bufferedWriter;
     }
 }
